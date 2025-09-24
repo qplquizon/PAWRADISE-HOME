@@ -1,0 +1,98 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #fff !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem 3rem;
+    height: 100px;
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.logo-img {
+    width: 60px;
+    height: 60px;
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+}
+
+.brand-line1 {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.brand-line2 {
+    font-weight: 600;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.nav-link {
+    font-weight: 600;
+    color: #222;
+    text-transform: uppercase;
+    padding: 0.7rem 0;
+    font-size: 1.4rem;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #f08080; /* soft coral */
+}
+
+.navbar-nav .nav-item:last-child {
+    margin-left: 2rem;
+}
+
+.navbar-nav .nav-item:last-child .nav-link svg {
+    fill: #556;
+    width: 28px;
+    height: 28px;
+}
+
+.landing-section {
+    height: 110vh;
+    background-image: url('Background.svg');
+    background-size: contain;
+    background-position: center top;
+    background-repeat: no-repeat;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+@media (max-width: 768px) {
+    .landing-section {
+        background-position: center top;
+        height: 100vh;
+        background-size: cover;
+    }
+    .nav-link {
+        font-size: 0.9rem;
+        padding: 0.4rem 0;
+    }
+
+}
