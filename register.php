@@ -1,10 +1,10 @@
 <?php
 include 'config.php';
 
-// Clear any previous messages
+
 $message = [];
 
-// Prevent caching
+
 header("Cache-Control: no-cache, no-store, must-revalidate");
 header("Pragma: no-cache");
 header("Expires: 0");
@@ -30,10 +30,10 @@ if(isset($_POST['submit']))
         $message[] = 'Confirm password does not match!';
     }
     else{
-        // Hash password before saving
+       
         $hashed_pass = password_hash($pass, PASSWORD_DEFAULT);
 
-        // Insert new account
+       
         $insert = $conn->prepare("INSERT INTO `account` (name, email, password, image, user_type) VALUES (?, ?, ?, '', 'user')");
         $insert->execute([$name, $email, $hashed_pass]);
 
@@ -56,10 +56,15 @@ if(isset($_POST['submit']))
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            background: white;
-            background-image: url('https://www.transparenttextures.com/patterns/paw-print.png');
-            background-repeat: repeat;
+            background-image: url('Background.svg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .form-container {
             background: rgba(255, 255, 255, 0.9);
