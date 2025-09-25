@@ -1,0 +1,161 @@
+/* Adopt Page Styles */
+
+.adopt-hero {
+    background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.adopt-hero h1 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.adopt-hero .lead {
+    font-size: 1.25rem;
+    opacity: 0.95;
+}
+
+.adoption-process {
+    padding: 4rem 0;
+}
+
+.process-step {
+    padding: 2rem 1rem;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background-color: #f08080;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+}
+
+.process-step h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.process-step p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.adoption-form {
+    background-color: #f8f9fa;
+}
+
+.form-container {
+    background: white;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h3 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #f08080;
+    box-shadow: 0 0 0 0.2rem rgba(240, 128, 128, 0.25);
+}
+
+.form-container .btn {
+    background-color: #f08080;
+    border-color: #f08080;
+    padding: 0.75rem 3rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+}
+
+.form-container .btn:hover {
+    background-color: #e66b6b;
+    border-color: #e66b6b;
+}
+
+.adoption-requirements {
+    padding: 4rem 0;
+}
+
+.adoption-requirements h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.adoption-requirements h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.adoption-requirements ul li {
+    padding: 0.5rem 0;
+    color: #555;
+    font-size: 1rem;
+}
+
+.adoption-requirements ul li:before {
+    content: "✓ ";
+    color: #f08080;
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .adopt-hero {
+        min-height: 40vh;
+        padding: 3rem 0;
+    }
+
+    .adopt-hero h1 {
+        font-size: 2rem;
+    }
+
+    .adopt-hero .lead {
+        font-size: 1.1rem;
+    }
+
+    .form-container {
+        padding: 2rem 1rem;
+    }
+
+    .process-step {
+        padding: 1.5rem 0.5rem;
+    }
+
+    .step-number {
+        width: 50px;
+        height: 50px;
+        font-size: 1.25rem;
+    }
+}
