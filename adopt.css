@@ -1,5 +1,3 @@
-/* Adopt Page Styles */
-
 .adopt-hero {
     background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
     min-height: 50vh;
@@ -101,36 +99,6 @@
     border-color: #e66b6b;
 }
 
-.adoption-requirements {
-    padding: 4rem 0;
-}
-
-.adoption-requirements h2 {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 2rem;
-}
-
-.adoption-requirements h4 {
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-}
-
-.adoption-requirements ul li {
-    padding: 0.5rem 0;
-    color: #555;
-    font-size: 1rem;
-}
-
-.adoption-requirements ul li:before {
-    content: "✓ ";
-    color: #f08080;
-    font-weight: bold;
-    margin-right: 0.5rem;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .adopt-hero {
         min-height: 40vh;

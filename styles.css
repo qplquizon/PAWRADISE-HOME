@@ -157,7 +157,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Featured Animals Section */
 .featured-animals {
     background-color: #f8f9fa;
 }
@@ -226,7 +225,6 @@ body {
     padding: 0.5rem 1rem;
 }
 
-/* CTA Section */
 .cta-section {
     background: linear-gradient(135deg, #f08080 0%, #ff6b6b 100%);
 }
@@ -272,7 +270,6 @@ body {
     transform: translateY(-2px);
 }
 
-/* Footer */
 .footer-section {
     background-color: #2c3e50;
 }
@@ -299,9 +296,6 @@ body {
     text-decoration: none;
 }
 
-
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .navbar {
         padding: 1rem;
