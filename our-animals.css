@@ -1,0 +1,177 @@
+/* Our Animals Page Styles */
+
+.animals-hero {
+    background: linear-gradient(135deg, #f08080 0%, #ff6b6b 100%);
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.animals-hero h1 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.animals-hero .lead {
+    font-size: 1.25rem;
+    opacity: 0.95;
+}
+
+.category-filters {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.category-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.btn-category {
+    padding: 0.5rem 1rem;
+    border: 2px solid #f08080;
+    background-color: transparent;
+    color: #f08080;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: capitalize;
+}
+
+.btn-category:hover {
+    background-color: #f08080;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(240, 128, 128, 0.3);
+}
+
+.btn-category.active {
+    background-color: #f08080;
+    color: white;
+    box-shadow: 0 2px 4px rgba(240, 128, 128, 0.3);
+}
+
+.animals-grid {
+    padding: 4rem 0;
+}
+
+.animal-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+}
+
+.animal-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.animal-image {
+    height: 250px;
+    overflow: hidden;
+}
+
+.animal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.animal-card:hover .animal-image img {
+    transform: scale(1.05);
+}
+
+.animal-info {
+    background: white;
+}
+
+.animal-name {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.animal-breed {
+    color: #666;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.animal-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.badge {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+}
+
+.adoption-cta {
+    background-color: #f8f9fa;
+}
+
+.adoption-cta h2 {
+    color: #333;
+    font-weight: 600;
+}
+
+.adoption-cta .lead {
+    color: #666;
+    margin-bottom: 2rem;
+}
+
+.adoption-cta .btn {
+    background-color: #f08080;
+    border-color: #f08080;
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.adoption-cta .btn:hover {
+    background-color: #e66b6b;
+    border-color: #e66b6b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .animals-hero {
+        min-height: 40vh;
+        padding: 3rem 0;
+    }
+
+    .animals-hero h1 {
+        font-size: 2rem;
+    }
+
+    .animals-hero .lead {
+        font-size: 1.1rem;
+    }
+
+    .animal-image {
+        height: 200px;
+    }
+
+    .adoption-cta {
+        padding: 3rem 0;
+    }
+
+    .category-buttons {
+        gap: 0.25rem;
+    }
+
+    .btn-category {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}

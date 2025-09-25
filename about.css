@@ -1,0 +1,253 @@
+/* About Page Styles */
+
+.about-hero {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    color: white;
+}
+
+.about-hero h1 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.about-hero .lead {
+    font-size: 1.25rem;
+    opacity: 0.95;
+}
+
+.our-story {
+    padding: 4rem 0;
+}
+
+.our-story h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.our-story .lead {
+    color: #666;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+.our-story p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.our-story img {
+    border-radius: 12px;
+}
+
+.our-mission {
+    background-color: #f8f9fa;
+}
+
+.mission-item {
+    padding: 2rem 1rem;
+}
+
+.mission-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.mission-item h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.mission-item p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.our-team {
+    padding: 4rem 0;
+}
+
+.our-team h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.team-member {
+    padding: 1.5rem;
+}
+
+.team-photo {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+}
+
+.team-member h5 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.team-role {
+    color: #f08080;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+.team-bio {
+    color: #666;
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.contact-info {
+    padding: 4rem 0;
+}
+
+.contact-info h2 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.contact-info h4 {
+    color: #333;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.contact-item {
+    margin-bottom: 1.5rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.contact-item strong {
+    color: #333;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.social-link {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: #f08080;
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.social-link:hover {
+    background-color: #e66b6b;
+    color: white;
+    text-decoration: none;
+}
+
+.cta-section {
+    background: linear-gradient(135deg, #f08080 0%, #ff6b6b 100%);
+}
+
+.cta-section h2 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.cta-section .lead {
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.cta-buttons .btn {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-radius: 8px;
+}
+
+.cta-buttons .btn-light {
+    background-color: white;
+    color: #f08080;
+    border-color: white;
+}
+
+.cta-buttons .btn-light:hover {
+    background-color: #f8f9fa;
+    color: #e66b6b;
+}
+
+.cta-buttons .btn-outline-light {
+    border-color: white;
+    color: white;
+}
+
+.cta-buttons .btn-outline-light:hover {
+    background-color: white;
+    color: #f08080;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .about-hero {
+        min-height: 40vh;
+        padding: 3rem 0;
+    }
+
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+
+    .about-hero .lead {
+        font-size: 1.1rem;
+    }
+
+    .our-story {
+        padding: 3rem 0;
+    }
+
+    .our-story .row {
+        flex-direction: column-reverse;
+    }
+
+    .mission-item {
+        padding: 1.5rem 0.5rem;
+    }
+
+    .mission-icon {
+        font-size: 2.5rem;
+    }
+
+    .team-photo {
+        width: 120px;
+        height: 120px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .cta-buttons .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .cta-buttons .btn:last-child {
+        margin-bottom: 0;
+    }
+}

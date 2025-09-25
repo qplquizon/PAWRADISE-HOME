@@ -10,7 +10,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
                 <img src="pawradise-logo.png" alt="Pawradise Logo" class="logo-img d-inline-block align-text-top" />
                 <div class="brand-text ms-2">
                     <div class="brand-line1">PAWRADISE</div>
@@ -18,13 +18,17 @@
                 </div>
             </a>
 
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="#">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">OUR ANIMALS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">DONATE</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="our-animals.html">OUR ANIMALS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" title="User Profile">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#556" viewBox="0 0 24 24">
@@ -37,7 +41,96 @@
             </div>
         </div>
     </nav>
-    <section class="landing-section text-center py-5">
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Welcome to Pawradise Home</h1>
+            <p class="hero-subtitle">Where your Forever Companion awaits</p>
+            <p class="hero-description">Discover loving animals waiting for their forever homes. <br> we have the perfect companion for you.</p>
+            <div class="hero-buttons">
+                <a href="our-animals.html" class="btn btn-primary btn-lg me-3">Meet Our Animals</a>
+                <a href="adopt.html" class="btn btn-outline-light btn-lg">Start Adoption</a>
+            </div>
+        </div>
     </section>
+
+    <section class="featured-animals py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-5">Featured Friends</h2>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://images.unsplash.com/photo-1544568100-847a948585b9?w=400&h=300&fit=crop" alt="Golden Retriever" class="img-fluid">
+                        </div>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Buddy</h5>
+                            <p class="animal-breed">Golden Retriever</p>
+                            <p class="animal-description">Friendly and energetic 2-year-old who loves playing fetch.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=300&fit=crop" alt="Tabby Cat" class="img-fluid">
+                        </div>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Whiskers</h5>
+                            <p class="animal-breed">Tabby Cat</p>
+                            <p class="animal-description">Sweet and affectionate cat who loves cuddles.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop" alt="Quarter Horse" class="img-fluid">
+                        </div>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Thunder</h5>
+                            <p class="animal-breed">Quarter Horse</p>
+                            <p class="animal-description">Gentle and well-trained horse perfect for trail riding.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-4">
+                <a href="our-animals.html" class="btn btn-outline-primary">View All Animals</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section py-5 bg-primary text-white">
+        <div class="container text-center">
+            <h2 class="mb-4">Ready to Find Your Perfect Companion?</h2>
+            <p class="lead mb-4">Take the first step towards giving an animal their forever home.</p>
+            <div class="cta-buttons">
+                <a href="adopt.html" class="btn btn-light btn-lg me-3">Start Adoption Process</a>
+                <a href="donate.html" class="btn btn-outline-light btn-lg">Make a Donation</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer-section py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6">
+                    <h5>Pawradise Home</h5>
+                    <p>Where Every Paw Finds Its Paradise</p>
+                </div>
+                <div class="col-lg-3"> 
+                    <h6>Contact</h6>
+                    <p>Phone: 12345678910</p>
+                    <p>Email: pawgrammers@gmail.com</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="bootstrap.js"></script>
 </body>
 </html>
