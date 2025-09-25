@@ -94,6 +94,7 @@ if(isset($_POST['submit']))
 </head>
 <body>
 
+<section class="form-container">
 <?php
 if(isset($message)){
     foreach($message as $msg){
@@ -105,8 +106,6 @@ if(isset($message)){
     }
 }
 ?>
-
-<section class="form-container">
     <form action="" method="POST">
         <h3>Register Now</h3>
         <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" required>
