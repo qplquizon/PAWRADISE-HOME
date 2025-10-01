@@ -59,7 +59,7 @@ body {
 
 .nav-link:hover,
 .nav-link.active {
-    color: #f08080; /* soft coral */
+    color: #f08080; 
 }
 
 .navbar-nav .nav-item:last-child {
@@ -72,7 +72,18 @@ body {
     height: 28px;
 }
 
-/* Hero Section */
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.dropdown-item:hover {
+    background-color: #f08080;
+    color: white;
+}
+
+
 .hero-section {
     height: 100vh;
     background-image: url('Background.svg');
