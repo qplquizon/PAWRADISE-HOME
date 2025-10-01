@@ -1,9 +1,32 @@
+<?php
+include 'config.php';
+session_start();
+
+if(!isset($_SESSION['user_id'])){
+    header('location:Login.php');
+    exit();
+}
+
+$user_id = $_SESSION['user_id'];
+$select = $conn->prepare("SELECT * FROM `account` WHERE id = ?");
+$select->execute([$user_id]);
+$user = $select->fetch(PDO::FETCH_ASSOC);
+
+if($user['user_type'] !== 'admin'){
+    header('location:index.html');
+    exit();
+}
+
+// Fetch donations
+$donations = $conn->query("SELECT * FROM donations ORDER BY date DESC")->fetchAll(PDO::FETCH_ASSOC);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Admin Panel - Pawradise Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="adopt.css" />
@@ -25,22 +48,68 @@
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.html">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="admin_panel.php">ADMIN</a></li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" title="User Profile">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#556" viewBox="0 0 24 24">
-                                <circle cx="12" cy="8" r="4" />
-                                <path d="M4 20c0-4 8-4 8-4s8 0 8 4v1H4v-1z" />
-                            </svg>
+                        <a class="nav-link" href="logout.php" title="Logout">
+                            Logout
                         </a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <section class="admin-dashboard py-5">
+        <div class="container">
+            <h1 class="text-center mb-5">Admin Dashboard</h1>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Donations</h3>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if(count($donations) > 0): ?>
+                                        <?php foreach($donations as $donation): ?>
+                                            <tr>
+                                                <td><?php echo $donation['id']; ?></td>
+                                                <td><?php echo htmlspecialchars($donation['name']); ?></td>
+                                                <td><?php echo htmlspecialchars($donation['email']); ?></td>
+                                                <td>$<?php echo number_format($donation['amount'], 2); ?></td>
+                                                <td><?php echo $donation['date']; ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="5" class="text-center">No donations yet.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
