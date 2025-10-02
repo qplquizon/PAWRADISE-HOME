@@ -1,13 +1,6 @@
 <?php
-include 'config.php';
 session_start();
-
-// Fetch all pets
-$pets_query = $conn->prepare("SELECT * FROM `pets`");
-$pets_query->execute();
-$pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -37,9 +30,9 @@ $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item"><a class="nav-link" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link active" href="our-animals.php">OUR ANIMALS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="adopt.php">ADOPT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.php">ABOUT</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Profile">
                             <?php if(isset($_SESSION['user_id'])): ?>
@@ -75,33 +68,50 @@ $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
     <section class="animals-grid py-5">
         <div class="container">
             <div class="row g-4" id="animals-container">
-                <?php if(count($pets) > 0): ?>
-                    <?php foreach($pets as $pet): ?>
-                        <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
-                            <div class="animal-card">
-                                <div class="animal-image">
-                                    <?php if($pet['image']): ?>
-                                        <img src="<?php echo htmlspecialchars($pet['image']); ?>" alt="<?php echo htmlspecialchars($pet['name']); ?>" class="img-fluid">
-                                    <?php else: ?>
-                                        <img src="https://via.placeholder.com/300x200?text=No+Image" alt="No Image" class="img-fluid">
-                                    <?php endif; ?>
-                                </div>
-                                <div class="animal-info p-3">
-                                    <h5 class="animal-name"><?php echo htmlspecialchars($pet['name']); ?></h5>
-                                    <p class="animal-breed"><?php echo htmlspecialchars($pet['breed']); ?></p>
-                                    <p class="animal-description"><?php echo htmlspecialchars($pet['description']); ?></p>
-                                    <span class="badge <?php echo $pet['availability'] ? 'bg-primary' : 'bg-secondary'; ?>">
-                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
-                                    </span>
-                                </div>
-                            </div>
+
+                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://images.esquiremag.ph/esquiremagph/images/2020/05/20/native-dog-breed-philippines-claws-07.jpg" alt="Tiger Commando" class="img-fluid">
                         </div>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="col-12">
-                        <p class="text-center">No animals available for adoption at the moment.</p>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Tiger Commando</h5>
+                            <p class="animal-breed">Native</p>
+                            <p class="animal-description">Friendly and energetic 2-year-old who loves playing fetch and going for long walks.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
                     </div>
-                <?php endif; ?>
+                </div>
+
+                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://i.imgflip.com/9fi9je.png?a488352" alt="Labrador" class="img-fluid">
+                        </div>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Primo</h5>
+                            <p class="animal-breed">Labrador</p>
+                            <p class="animal-description">Playful and loyal 1-year-old lab who loves sunsets and is great with children.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
+                    <div class="animal-card">
+                        <div class="animal-image">
+                            <img src="https://www.meowbox.com/cdn/shop/articles/Screen_Shot_2024-03-15_at_10.53.41_AM.png?v=1710525250" alt="Cat" class="img-fluid">
+                        </div>
+                        <div class="animal-info p-3">
+                            <h5 class="animal-name">Happy</h5>
+                            <p class="animal-breed">Beluga</p>
+                            <p class="animal-description">Curious and friendly 3-year-old beluga with lots of energy and a great sense of smell.</p>
+                            <span class="badge bg-primary">Available</span>
+                        </div>
+                    </div>
+                </div>
+
+                
             </div>
         </div>
     </section>
@@ -110,7 +120,7 @@ $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
         <div class="container">
             <h2 class="mb-4">Ready to Adopt?</h2>
             <p class="lead mb-4">Take the first step towards giving one of our animals their forever home.</p>
-            <a href="adopt.html" class="btn btn-primary btn-lg">Start Adoption Process</a>
+            <a href="adopt.php" class="btn btn-primary btn-lg">Start Adoption Process</a>
         </div>
     </section>
     <script src="bootstrap.js"></script>
