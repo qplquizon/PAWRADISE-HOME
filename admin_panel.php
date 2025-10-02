@@ -153,8 +153,10 @@ try {
                 <?php foreach($pets as $pet): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card">
-                            <?php if($pet['image']): ?>
+                            <?php if(!empty($pet['image'])): ?>
                                 <img src="<?php echo htmlspecialchars($pet['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($pet['name']); ?>" />
+                            <?php else: ?>
+                                <img src="uploads/default-pet.png" class="card-img-top" alt="Default Pet Image" />
                             <?php endif; ?>
                             <div class="card-body">
                                 <h5 class="card-title"><?php echo htmlspecialchars($pet['name']); ?></h5>
