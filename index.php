@@ -28,7 +28,7 @@ session_start();
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item"><a class="nav-link active" href="index.php">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="our-animals.html">OUR ANIMALS</a></li>
+                    <li class="nav-item"><a class="nav-link" href="our-animals.php">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
                     <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
                     <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
@@ -63,7 +63,7 @@ session_start();
             <p class="hero-subtitle">Where your Forever Companion awaits</p>
             <p class="hero-description">Discover loving animals waiting for their forever homes. <br> we have the perfect companion for you.</p>
             <div class="hero-buttons">
-                <a href="our-animals.html" class="btn btn-primary btn-lg me-3">Meet Our Animals</a>
+                <a href="our-animals.php" class="btn btn-primary btn-lg me-3">Meet Our Animals</a>
                 <a href="adopt.html" class="btn btn-outline-light btn-lg">Start Adoption</a>
             </div>
         </div>
@@ -119,7 +119,7 @@ session_start();
                 </div>
             </div>
             <div class="text-center mt-4">
-                <a href="our-animals.html" class="btn btn-outline-primary">View All Animals</a>
+                <a href="our-animals.php" class="btn btn-outline-primary">View All Animals</a>
             </div>
         </div>
     </section>
@@ -144,7 +144,7 @@ session_start();
                 </div>
                 <div class="col-lg-3"> 
                     <h6>Contact</h6>
-                    <p>Phone: 12345678910</p>
+                    <p>Phone: 63+ 9389382916</p>
                     <p>Email: pawgrammers@gmail.com</p>
                 </div>
             </div>

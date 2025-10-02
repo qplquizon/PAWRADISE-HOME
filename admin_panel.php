@@ -4,11 +4,46 @@
 include 'config.php';
 session_start();
 
-
+// Query to count the number of registered users
 $query = $conn->prepare("SELECT COUNT(*) as total_users FROM `account`");
 $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
+
+// Handle pet addition
+if(isset($_POST['add_pet'])){
+    $name = $_POST['name'];
+    $breed = $_POST['breed'];
+    $description = $_POST['description'];
+    $availability = isset($_POST['availability']) ? 1 : 0;
+
+    // Handle image upload
+    $image = '';
+    if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
+        $image_name = $_FILES['image']['name'];
+        $image_tmp = $_FILES['image']['tmp_name'];
+        $image_path = 'uploads/' . basename($image_name);
+        if(move_uploaded_file($image_tmp, $image_path)){
+            $image = $image_path;
+        }
+    }
+
+    // Insert pet into database
+    $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
+    $insert->execute([$name, $breed, $description, $image, $availability]);
+}
+
+// Handle pet deletion
+if(isset($_GET['delete_pet'])){
+    $pet_id = $_GET['delete_pet'];
+    $delete = $conn->prepare("DELETE FROM `pets` WHERE id = ?");
+    $delete->execute([$pet_id]);
+}
+
+// Fetch all pets
+$pets_query = $conn->prepare("SELECT * FROM `pets`");
+$pets_query->execute();
+$pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -77,6 +112,61 @@ $total_users = $result['total_users'];
                 </div>
             </div>
             
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Manage Pets for Adoption</h2>
+        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4">
+            <div class="mb-3">
+                <label for="name" class="form-label">Pet Name</label>
+                <input type="text" class="form-control" id="name" name="name" required />
+            </div>
+            <div class="mb-3">
+                <label for="breed" class="form-label">Breed</label>
+                <input type="text" class="form-control" id="breed" name="breed" required />
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Picture</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" required />
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="availability" name="availability" checked />
+                <label class="form-check-label" for="availability">Available for Adoption</label>
+            </div>
+            <button type="submit" name="add_pet" class="btn btn-primary">Add Pet</button>
+        </form>
+
+        <h3 class="mb-3">Existing Pets</h3>
+        <div class="row">
+            <?php if(count($pets) > 0): ?>
+                <?php foreach($pets as $pet): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <?php if($pet['image']): ?>
+                                <img src="<?php echo htmlspecialchars($pet['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($pet['name']); ?>" />
+                            <?php endif; ?>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                <p class="card-text"><strong>Breed:</strong> <?php echo htmlspecialchars($pet['breed']); ?></p>
+                                <p class="card-text"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                <p class="card-text">
+                                    <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
+                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
+                                    </span>
+                                </p>
+                                <a href="admin_panel.php?delete_pet=<?php echo $pet['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this pet?');">Delete</a>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No pets found.</p>
+            <?php endif; ?>
         </div>
     </div>
 
