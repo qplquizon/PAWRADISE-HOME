@@ -167,7 +167,7 @@ try {
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
                                 </p>
-                                <a href="admin_panel.php?delete_pet=<?php echo $pet['id']; ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this pet?');">Delete</a>
+                                <a href="admin_panel.php?delete_pet=<?php echo htmlspecialchars($pet['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this pet?');">Delete</a>
                             </div>
                         </div>
                     </div>
