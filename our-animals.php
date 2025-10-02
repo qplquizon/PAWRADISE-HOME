@@ -1,5 +1,15 @@
 <?php
+include 'config.php';
 session_start();
+
+try {
+    $pets_query = $conn->prepare("SELECT * FROM `pets`");
+    $pets_query->execute();
+    $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching pets: " . $e->getMessage();
+    $pets = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,24 +78,31 @@ session_start();
     <section class="animals-grid py-5">
         <div class="container">
             <div class="row g-4" id="animals-container">
-
-                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://images.esquiremag.ph/esquiremagph/images/2020/05/20/native-dog-breed-philippines-claws-07.jpg" alt="Tiger Commando" class="img-fluid">
+                <?php if(count($pets) > 0): ?>
+                    <?php foreach($pets as $pet): ?>
+                        <div class="col-lg-4 col-md-6 animal-item" data-category="pets">
+                            <div class="animal-card">
+                                <div class="animal-image">
+                                    <?php if(!empty($pet['image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($pet['image']); ?>" alt="<?php echo htmlspecialchars($pet['name']); ?>" class="img-fluid">
+                                    <?php else: ?>
+                                        <img src="uploads/default-pet.png" alt="Default Pet Image" class="img-fluid">
+                                    <?php endif; ?>
+                                </div>
+                                <div class="animal-info p-3">
+                                    <h5 class="animal-name"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                    <p class="animal-breed"><?php echo htmlspecialchars($pet['breed']); ?></p>
+                                    <p class="animal-description"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                    <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
+                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Tiger Commando</h5>
-                            <p class="animal-breed">Native</p>
-                            <p class="animal-description">Friendly and energetic 2-year-old who loves playing fetch and going for long walks.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
-                    </div>
-                </div>
-
-                
-
-                
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No pets available at the moment.</p>
+                <?php endif; ?>
             </div>
         </div>
     </section>
