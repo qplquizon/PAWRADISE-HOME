@@ -1,7 +1,7 @@
 
 
 <?php
-echo "PHP is working";
+// echo "PHP is working";
 include 'config.php';
 session_start();
 
