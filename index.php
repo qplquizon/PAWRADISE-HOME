@@ -29,9 +29,9 @@ session_start();
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item"><a class="nav-link active" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.php">OUR ANIMALS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="adopt.php">ADOPT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.php">ABOUT</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Profile">
                             <?php if(isset($_SESSION['user_id'])): ?>

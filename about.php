@@ -30,7 +30,7 @@ session_start();
                 <ul class="navbar-nav align-items-center">
                     <li class="nav-item"><a class="nav-link" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.php">OUR ANIMALS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="adopt.php">ADOPT</a></li>
                     <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
                     <li class="nav-item"><a class="nav-link active" href="about.php">ABOUT</a></li>
                     <li class="nav-item dropdown">
