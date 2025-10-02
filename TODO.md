@@ -1,2 +1,2 @@
-- [x] Remove the Profile menu item from index.php dropdown
-- [x] Remove the Profile menu item from admin_panel.php dropdown
+- [ ] Update adopt.html navbar to convert profile icon to dropdown menu with Logout option
+- [ ] Add confirmLogout function to adopt.js
