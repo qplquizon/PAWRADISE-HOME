@@ -31,8 +31,8 @@ session_start();
                     <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.php">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link active" href="adopt.php">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">ABOUT</a></li>
+                    <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.php">ABOUT</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Profile">
                             <?php if(isset($_SESSION['user_id'])): ?>
