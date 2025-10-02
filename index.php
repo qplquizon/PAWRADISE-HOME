@@ -27,7 +27,7 @@ session_start();
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link active" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.html">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
                     <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>

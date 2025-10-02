@@ -34,7 +34,7 @@ if(isset($_POST['submit'])){
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.html">
+            <a class="navbar-brand d-flex align-items-center" href="index.php">
                 <img src="pawradise-logo.png" alt="Pawradise Logo" class="logo-img d-inline-block align-text-top" />
                 <div class="brand-text ms-2">
                     <div class="brand-line1">PAWRADISE</div>
@@ -48,7 +48,7 @@ if(isset($_POST['submit'])){
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.html">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
                     <li class="nav-item"><a class="nav-link active" href="donate.php">DONATE</a></li>

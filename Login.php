@@ -23,7 +23,7 @@ if($select->rowCount() > 0 && password_verify($pass, $row['password'])){
     if($row['user_type'] === 'admin'){
         header('location:admin_panel.php');
     } else {
-        header('location:index.html');
+        header('location:index.php');
     }
 } else {
     $message[] = 'Invalid email or password!';
