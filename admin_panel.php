@@ -1,23 +1,24 @@
 
 
 <?php
+echo "PHP is working";
 include 'config.php';
 session_start();
 
-// Query to count the number of registered users
+
 $query = $conn->prepare("SELECT COUNT(*) as total_users FROM `account`");
 $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
 
-// Handle pet addition
+
 if(isset($_POST['add_pet'])){
     $name = $_POST['name'];
     $breed = $_POST['breed'];
     $description = $_POST['description'];
     $availability = isset($_POST['availability']) ? 1 : 0;
 
-    // Handle image upload
+ 
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
@@ -28,22 +29,27 @@ if(isset($_POST['add_pet'])){
         }
     }
 
-    // Insert pet into database
+
     $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
     $insert->execute([$name, $breed, $description, $image, $availability]);
 }
 
-// Handle pet deletion
+
 if(isset($_GET['delete_pet'])){
     $pet_id = $_GET['delete_pet'];
     $delete = $conn->prepare("DELETE FROM `pets` WHERE id = ?");
     $delete->execute([$pet_id]);
 }
 
-// Fetch all pets
-$pets_query = $conn->prepare("SELECT * FROM `pets`");
-$pets_query->execute();
-$pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+
+try {
+    $pets_query = $conn->prepare("SELECT * FROM `pets`");
+    $pets_query->execute();
+    $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching pets: " . $e->getMessage();
+    $pets = [];
+}
 ?>
 
 <!DOCTYPE html>
