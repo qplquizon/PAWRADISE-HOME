@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,18 +28,30 @@
 
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav align-items-center">
-                    <li class="nav-item"><a class="nav-link" href="index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link" href="index.php">HOME</a></li>
                     <li class="nav-item"><a class="nav-link" href="our-animals.php">OUR ANIMALS</a></li>
                     <li class="nav-item"><a class="nav-link" href="adopt.html">ADOPT</a></li>
-                    <li class="nav-item"><a class="nav-link" href="donate.html">DONATE</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="about.html">ABOUT</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" title="User Profile">
+                    <li class="nav-item"><a class="nav-link" href="donate.php">DONATE</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about.php">ABOUT</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="User Profile">
+                            <?php if(isset($_SESSION['user_id'])): ?>
+                                <span class="me-2"><?php echo htmlspecialchars($_SESSION['user_email']); ?></span>
+                            <?php endif; ?>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#556" viewBox="0 0 24 24">
                                 <circle cx="12" cy="8" r="4" />
                                 <path d="M4 20c0-4 8-4 8-4s8 0 8 4v1H4v-1z" />
                             </svg>
                         </a>
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                            <?php if(isset($_SESSION['user_id'])): ?>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a></li>
+                            <?php else: ?>
+                                <li><a class="dropdown-item" href="Login.php">Login</a></li>
+                                <li><a class="dropdown-item" href="register.php">Register</a></li>
+                            <?php endif; ?>
+                        </ul>
                     </li>
                 </ul>
             </div>
@@ -94,5 +109,12 @@
         </div>
     </section>
     <script src="bootstrap.js"></script>
+    <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "logout.php";
+            }
+        }
+    </script>
 </body>
 </html>
