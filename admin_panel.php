@@ -35,8 +35,8 @@ if(isset($_POST['add_pet'])){
 }
 
 
-if(isset($_GET['delete_pet'])){
-    $pet_id = $_GET['delete_pet'];
+if(isset($_POST['delete_pet'])){
+    $pet_id = $_POST['delete_pet'];
     $delete = $conn->prepare("DELETE FROM `pets` WHERE id = ?");
     $delete->execute([$pet_id]);
 }
@@ -167,7 +167,7 @@ try {
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
                                 </p>
-                                <a href="admin_panel.php?delete_pet=<?php echo htmlspecialchars($pet['id']); ?>" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this pet?');">Delete</a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-pet-id="<?php echo htmlspecialchars($pet['id']); ?>" data-pet-name="<?php echo htmlspecialchars($pet['name']); ?>">Delete</button>
                             </div>
                         </div>
                     </div>
@@ -178,6 +178,40 @@ try {
         </div>
     </div>
 
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <span id="petName"></span>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form method="POST" action="admin_panel.php" style="display:inline;">
+                        <input type="hidden" name="delete_pet" id="deletePetId">
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var petId = button.getAttribute('data-pet-id');
+            var petName = button.getAttribute('data-pet-name');
+            var modalPetName = deleteModal.querySelector('#petName');
+            var modalPetId = deleteModal.querySelector('#deletePetId');
+            modalPetName.textContent = petName;
+            modalPetId.value = petId;
+        });
+    </script>
 </body>
 </html>
