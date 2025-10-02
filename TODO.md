@@ -1,0 +1,2 @@
+- [x] Remove the Profile menu item from index.php dropdown
+- [x] Remove the Profile menu item from admin_panel.php dropdown

@@ -1,5 +1,3 @@
-
-
 <?php
 // echo "PHP is working";
 include 'config.php';
@@ -91,7 +89,6 @@ try {
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                             <?php if(isset($_SESSION['user_id'])): ?>
-                                <li><a class="dropdown-item" href="#">Profile</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a></li>
                             <?php else: ?>

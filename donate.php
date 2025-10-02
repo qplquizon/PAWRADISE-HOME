@@ -118,47 +118,6 @@ if(isset($_POST['submit'])){
         </div>
     </section>
 
-    <section class="donation-form py-5 bg-light">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <div class="card shadow">
-                        <div class="card-header bg-primary text-white text-center">
-                            <h3>Make a Donation</h3>
-                        </div>
-                        <div class="card-body">
-                            <?php
-                            if(isset($message)){
-                                foreach($message as $msg){
-                                    $close_icon = (strpos($msg, 'successfully') === false) ? '<i class="fas fa-times" onclick="this.parentElement.remove();"></i>' : '';
-                                    echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                            '.$msg.'
-                                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                          </div>';
-                                }
-                            }
-                            ?>
-                            <form action="" method="POST">
-                                <div class="mb-3">
-                                    <label for="name" class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email Address</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="amount" class="form-label">Donation Amount ($)</label>
-                                    <input type="number" class="form-control" id="amount" name="amount" step="0.01" min="1" required>
-                                </div>
-                                <button type="submit" name="submit" class="btn btn-primary w-100">Donate Now</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
