@@ -83,33 +83,7 @@ session_start();
                     </div>
                 </div>
 
-                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://i.imgflip.com/9fi9je.png?a488352" alt="Labrador" class="img-fluid">
-                        </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Primo</h5>
-                            <p class="animal-breed">Labrador</p>
-                            <p class="animal-description">Playful and loyal 1-year-old lab who loves sunsets and is great with children.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://www.meowbox.com/cdn/shop/articles/Screen_Shot_2024-03-15_at_10.53.41_AM.png?v=1710525250" alt="Cat" class="img-fluid">
-                        </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Happy</h5>
-                            <p class="animal-breed">Beluga</p>
-                            <p class="animal-description">Curious and friendly 3-year-old beluga with lots of energy and a great sense of smell.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
-                    </div>
-                </div>
+                
 
                 
             </div>
