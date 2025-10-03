@@ -141,7 +141,7 @@
     border-color: #e66b6b;
 }
 
-/* Responsive Design */
+
 @media (max-width: 768px) {
     .animals-hero {
         min-height: 40vh;

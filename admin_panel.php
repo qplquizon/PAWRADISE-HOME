@@ -62,14 +62,29 @@ if(isset($_POST['update_pet'])){
         }
     }
 
-    if($image != ''){
-        // Update with new image
-        $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
-        $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
-    } else {
-        // Update without changing image
-        $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
-        $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+    try {
+        if($image != ''){
+            // Update with new image
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
+        } else {
+            // Update without changing image
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+        }
+    } catch (PDOException $e) {
+        // If column 'type' doesn't exist, update without it
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+            if($image != ''){
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $image, $availability, $pet_id]);
+            } else {
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $availability, $pet_id]);
+            }
+        } else {
+            throw $e;
+        }
     }
 }
 
