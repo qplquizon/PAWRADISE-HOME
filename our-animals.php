@@ -84,15 +84,24 @@ try {
     <section class="animals-grid py-5">
         <div class="container">
             <div class="row mb-4">
-                <div class="col-md-6">
+                <div class="col-md-12">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, breed, or type...">
                 </div>
-                <div class="col-md-6">
-                    <select id="sortSelect" class="form-select">
-                        <option value="name">Sort by Name</option>
-                        <option value="breed">Sort by Breed</option>
-                        <option value="type">Sort by Type</option>
-                    </select>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12 text-center">
+                    <div class="form-check d-inline-block me-3">
+                        <input class="form-check-input" type="checkbox" id="availableOnly" checked>
+                        <label class="form-check-label" for="availableOnly">
+                            Show only available for adoption
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12 text-center">
+                    <button id="filterDogs" class="btn btn-primary me-2">Dogs</button>
+                    <button id="filterCats" class="btn btn-secondary">Cats</button>
                 </div>
             </div>
 
@@ -105,7 +114,7 @@ try {
             <div class="row g-4" id="dogs-container">
                 <?php if(count($dogs) > 0): ?>
                     <?php foreach($dogs as $pet): ?>
-                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>">
+                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -134,7 +143,7 @@ try {
             <div class="row g-4" id="cats-container">
                 <?php if(count($cats) > 0): ?>
                     <?php foreach($cats as $pet): ?>
-                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>">
+                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -179,31 +188,30 @@ try {
 
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
-            const sortSelect = document.getElementById('sortSelect');
+            const availableOnly = document.getElementById('availableOnly');
+            const filterDogs = document.getElementById('filterDogs');
+            const filterCats = document.getElementById('filterCats');
             const dogsContainer = document.getElementById('dogs-container');
             const catsContainer = document.getElementById('cats-container');
 
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
-                const sortBy = sortSelect.value;
 
                 // Get all items
                 const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item')).concat(Array.from(catsContainer.querySelectorAll('.animal-item')));
 
-                // Filter
-                const filteredItems = allItems.filter(item => {
-                    const name = item.dataset.name;
-                    const breed = item.dataset.breed;
-                    const type = item.dataset.type;
+                // Filter by search
+                let filteredItems = allItems.filter(item => {
+                    const name = item.dataset.name.toLowerCase();
+                    const breed = item.dataset.breed.toLowerCase();
+                    const type = item.dataset.type.toLowerCase();
                     return name.includes(searchTerm) || breed.includes(searchTerm) || type.includes(searchTerm);
                 });
 
-                // Sort
-                filteredItems.sort((a, b) => {
-                    const aVal = a.dataset[sortBy];
-                    const bVal = b.dataset[sortBy];
-                    return aVal.localeCompare(bVal);
-                });
+                // Filter by availability
+                if (availableOnly.checked) {
+                    filteredItems = filteredItems.filter(item => item.dataset.availability === '1');
+                }
 
                 // Separate by type
                 const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
@@ -213,7 +221,7 @@ try {
                 dogsContainer.innerHTML = '';
                 catsContainer.innerHTML = '';
 
-                // Append sorted items
+                // Append items
                 dogs.forEach(item => dogsContainer.appendChild(item));
                 cats.forEach(item => catsContainer.appendChild(item));
 
@@ -223,7 +231,25 @@ try {
             }
 
             searchInput.addEventListener('input', filterAndSort);
-            sortSelect.addEventListener('change', filterAndSort);
+            availableOnly.addEventListener('change', filterAndSort);
+
+            filterDogs.addEventListener('click', () => {
+                dogsContainer.style.display = 'block';
+                catsContainer.style.display = 'none';
+                filterDogs.classList.add('btn-primary');
+                filterDogs.classList.remove('btn-secondary');
+                filterCats.classList.add('btn-secondary');
+                filterCats.classList.remove('btn-primary');
+            });
+
+            filterCats.addEventListener('click', () => {
+                dogsContainer.style.display = 'none';
+                catsContainer.style.display = 'block';
+                filterCats.classList.add('btn-primary');
+                filterCats.classList.remove('btn-secondary');
+                filterDogs.classList.add('btn-secondary');
+                filterDogs.classList.remove('btn-primary');
+            });
         });
     </script>
 </body>

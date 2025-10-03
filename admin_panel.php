@@ -44,6 +44,36 @@ if(isset($_POST['add_pet'])){
 }
 
 
+if(isset($_POST['update_pet'])){
+    $pet_id = $_POST['pet_id'];
+    $name = $_POST['name'];
+    $breed = $_POST['breed'];
+    $description = $_POST['description'];
+    $availability = isset($_POST['availability']) ? 1 : 0;
+    $type = $_POST['type'];
+
+    $image = '';
+    if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
+        $image_name = $_FILES['image']['name'];
+        $image_tmp = $_FILES['image']['tmp_name'];
+        $image_path = 'uploads/' . basename($image_name);
+        if(move_uploaded_file($image_tmp, $image_path)){
+            $image = $image_path;
+        }
+    }
+
+    if($image != ''){
+        // Update with new image
+        $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
+        $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
+    } else {
+        // Update without changing image
+        $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
+        $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+    }
+}
+
+
 if(isset($_POST['delete_pet'])){
     $pet_id = $_POST['delete_pet'];
     $delete = $conn->prepare("DELETE FROM `pets` WHERE id = ?");
@@ -131,7 +161,8 @@ try {
 
     <div class="container mt-5">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
-        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4">
+        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm">
+            <input type="hidden" id="pet_id" name="pet_id" value="" />
             <div class="mb-3">
                 <label for="name" class="form-label">Pet Name</label>
                 <input type="text" class="form-control" id="name" name="name" required />
@@ -146,7 +177,8 @@ try {
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Picture</label>
-                <input type="file" class="form-control" id="image" name="image" accept="image/*" required />
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+                <small class="form-text text-muted">Leave blank to keep existing image.</small>
             </div>
             <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" id="availability" name="availability" checked />
@@ -159,7 +191,9 @@ try {
                     <option value="cat">Cat</option>
                 </select>
             </div>
-            <button type="submit" name="add_pet" class="btn btn-primary">Add Pet</button>
+            <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn">Add Pet</button>
+            <button type="submit" name="update_pet" class="btn btn-success d-none" id="updateBtn">Update Pet</button>
+            <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
         </form>
 
         <h3 class="mb-3">Existing Pets</h3>
@@ -182,6 +216,7 @@ try {
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
                                 </p>
+                                <button type="button" class="btn btn-primary me-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-pet-id="<?php echo htmlspecialchars($pet['id']); ?>" data-pet-name="<?php echo htmlspecialchars($pet['name']); ?>">Delete</button>
                             </div>
                         </div>
@@ -233,6 +268,34 @@ try {
             var modalPetId = deleteModal.querySelector('#deletePetId');
             modalPetName.textContent = petName;
             modalPetId.value = petId;
+        });
+
+        // Edit pet button click handler
+        document.querySelectorAll('.edit-pet-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const pet = JSON.parse(button.getAttribute('data-pet'));
+                document.getElementById('pet_id').value = pet.id;
+                document.getElementById('name').value = pet.name;
+                document.getElementById('breed').value = pet.breed;
+                document.getElementById('description').value = pet.description;
+                document.getElementById('availability').checked = pet.availability == 1;
+                document.getElementById('type').value = pet.type;
+                // Image input left blank for no change
+
+                // Toggle buttons
+                document.getElementById('submitBtn').classList.add('d-none');
+                document.getElementById('updateBtn').classList.remove('d-none');
+                document.getElementById('cancelBtn').classList.remove('d-none');
+            });
+        });
+
+        // Cancel button handler
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('petForm').reset();
+            document.getElementById('pet_id').value = '';
+            document.getElementById('submitBtn').classList.remove('d-none');
+            document.getElementById('updateBtn').classList.add('d-none');
+            document.getElementById('cancelBtn').classList.add('d-none');
         });
     </script>
 </body>
