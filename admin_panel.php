@@ -29,8 +29,18 @@ if(isset($_POST['add_pet'])){
     }
 
 
-    $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type) VALUES (?, ?, ?, ?, ?, ?)");
-    $insert->execute([$name, $breed, $description, $image, $availability, $type]);
+    try {
+        $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type) VALUES (?, ?, ?, ?, ?, ?)");
+        $insert->execute([$name, $breed, $description, $image, $availability, $type]);
+    } catch (PDOException $e) {
+        // If column 'type' doesn't exist, insert without it
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+            $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
+            $insert->execute([$name, $breed, $description, $image, $availability]);
+        } else {
+            throw $e;
+        }
+    }
 }
 
 

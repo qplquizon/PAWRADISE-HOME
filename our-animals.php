@@ -6,6 +6,12 @@ try {
     $pets_query = $conn->prepare("SELECT * FROM `pets`");
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+    // Default type to 'dog' if not set
+    foreach ($pets as &$pet) {
+        if (!isset($pet['type'])) {
+            $pet['type'] = 'dog';
+        }
+    }
 } catch (PDOException $e) {
     echo "Error fetching pets: " . $e->getMessage();
     $pets = [];
