@@ -77,10 +77,29 @@ try {
 
     <section class="animals-grid py-5">
         <div class="container">
-            <div class="row g-4" id="animals-container">
-                <?php if(count($pets) > 0): ?>
-                    <?php foreach($pets as $pet): ?>
-                        <div class="col-lg-4 col-md-6 animal-item" data-category="pets">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Search by name, breed, or type...">
+                </div>
+                <div class="col-md-6">
+                    <select id="sortSelect" class="form-select">
+                        <option value="name">Sort by Name</option>
+                        <option value="breed">Sort by Breed</option>
+                        <option value="type">Sort by Type</option>
+                    </select>
+                </div>
+            </div>
+
+            <?php
+            $dogs = array_filter($pets, function($pet) { return $pet['type'] === 'dog'; });
+            $cats = array_filter($pets, function($pet) { return $pet['type'] === 'cat'; });
+            ?>
+
+            <h3>Dogs</h3>
+            <div class="row g-4" id="dogs-container">
+                <?php if(count($dogs) > 0): ?>
+                    <?php foreach($dogs as $pet): ?>
+                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -101,7 +120,36 @@ try {
                         </div>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <p>No pets available at the moment.</p>
+                    <p>No dogs available at the moment.</p>
+                <?php endif; ?>
+            </div>
+
+            <h3>Cats</h3>
+            <div class="row g-4" id="cats-container">
+                <?php if(count($cats) > 0): ?>
+                    <?php foreach($cats as $pet): ?>
+                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>">
+                            <div class="animal-card">
+                                <div class="animal-image">
+                                    <?php if(!empty($pet['image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($pet['image']); ?>" alt="<?php echo htmlspecialchars($pet['name']); ?>" class="img-fluid">
+                                    <?php else: ?>
+                                        <img src="uploads/default-pet.png" alt="Default Pet Image" class="img-fluid">
+                                    <?php endif; ?>
+                                </div>
+                                <div class="animal-info p-3">
+                                    <h5 class="animal-name"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                    <p class="animal-breed"><?php echo htmlspecialchars($pet['breed']); ?></p>
+                                    <p class="animal-description"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                    <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
+                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No cats available at the moment.</p>
                 <?php endif; ?>
             </div>
         </div>
@@ -122,6 +170,55 @@ try {
                 window.location.href = "logout.php";
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const sortSelect = document.getElementById('sortSelect');
+            const dogsContainer = document.getElementById('dogs-container');
+            const catsContainer = document.getElementById('cats-container');
+
+            function filterAndSort() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const sortBy = sortSelect.value;
+
+                // Get all items
+                const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item')).concat(Array.from(catsContainer.querySelectorAll('.animal-item')));
+
+                // Filter
+                const filteredItems = allItems.filter(item => {
+                    const name = item.dataset.name;
+                    const breed = item.dataset.breed;
+                    const type = item.dataset.type;
+                    return name.includes(searchTerm) || breed.includes(searchTerm) || type.includes(searchTerm);
+                });
+
+                // Sort
+                filteredItems.sort((a, b) => {
+                    const aVal = a.dataset[sortBy];
+                    const bVal = b.dataset[sortBy];
+                    return aVal.localeCompare(bVal);
+                });
+
+                // Separate by type
+                const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
+                const cats = filteredItems.filter(item => item.dataset.type === 'cat');
+
+                // Clear containers
+                dogsContainer.innerHTML = '';
+                catsContainer.innerHTML = '';
+
+                // Append sorted items
+                dogs.forEach(item => dogsContainer.appendChild(item));
+                cats.forEach(item => catsContainer.appendChild(item));
+
+                // Show/hide sections if no items
+                document.querySelector('h3').nextElementSibling.style.display = dogs.length > 0 ? 'block' : 'none';
+                document.querySelectorAll('h3')[1].nextElementSibling.style.display = cats.length > 0 ? 'block' : 'none';
+            }
+
+            searchInput.addEventListener('input', filterAndSort);
+            sortSelect.addEventListener('change', filterAndSort);
+        });
     </script>
 </body>
 </html>

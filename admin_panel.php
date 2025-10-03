@@ -15,8 +15,9 @@ if(isset($_POST['add_pet'])){
     $breed = $_POST['breed'];
     $description = $_POST['description'];
     $availability = isset($_POST['availability']) ? 1 : 0;
+    $type = $_POST['type'];
 
- 
+
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
@@ -28,8 +29,8 @@ if(isset($_POST['add_pet'])){
     }
 
 
-    $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
-    $insert->execute([$name, $breed, $description, $image, $availability]);
+    $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type) VALUES (?, ?, ?, ?, ?, ?)");
+    $insert->execute([$name, $breed, $description, $image, $availability, $type]);
 }
 
 
@@ -141,6 +142,13 @@ try {
                 <input class="form-check-input" type="checkbox" id="availability" name="availability" checked />
                 <label class="form-check-label" for="availability">Available for Adoption</label>
             </div>
+            <div class="mb-3">
+                <label for="type" class="form-label">Animal Type</label>
+                <select class="form-control" id="type" name="type" required>
+                    <option value="dog">Dog</option>
+                    <option value="cat">Cat</option>
+                </select>
+            </div>
             <button type="submit" name="add_pet" class="btn btn-primary">Add Pet</button>
         </form>
 
@@ -200,6 +208,12 @@ try {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="adopt.js"></script>
     <script>
+        function confirmLogout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "logout.php";
+            }
+        }
+
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
