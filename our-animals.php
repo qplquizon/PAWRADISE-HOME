@@ -12,6 +12,13 @@ try {
             $pet['type'] = 'dog';
         }
     }
+    $available_pets_count = 0;
+    foreach ($pets as $pet) {
+        if ($pet['availability'] == 1) {
+            $available_pets_count++;
+        }
+    }
+    echo "<!-- Available pets count in our-animals.php: $available_pets_count -->";
 } catch (PDOException $e) {
     echo "Error fetching pets: " . $e->getMessage();
     $pets = [];
