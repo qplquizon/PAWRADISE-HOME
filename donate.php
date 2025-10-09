@@ -1,5 +1,27 @@
 <?php
 session_start();
+include 'config.php';
+
+$message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+    $contactNumber = filter_var($_POST['contactNumber'], FILTER_SANITIZE_STRING);
+    $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    $paymentMethod = filter_var($_POST['paymentMethod'], FILTER_SANITIZE_STRING);
+    $referenceNumber = filter_var($_POST['referenceNumber'], FILTER_SANITIZE_STRING);
+
+    if (empty($name) || empty($contactNumber) || empty($amount) || $amount <= 0 || empty($paymentMethod) || empty($referenceNumber)) {
+        $message = 'Please fill all fields correctly!';
+    } else {
+        $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
+        if ($insert->execute([$name, $contactNumber, $amount, $paymentMethod, $referenceNumber])) {
+            $message = 'Donation submitted successfully!';
+        } else {
+            $message = 'Donation submission failed!';
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,7 +122,7 @@ session_start();
     <section class="donation-form-section py-5">
         <div class="container">
             <h2 class="text-center mb-4">Make a Donation</h2>
-            <form id="donationForm" action="admin_panel.php" method="POST" novalidate>
+            <form id="donationForm" action="donate.php" method="POST" novalidate>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" required />
@@ -183,6 +205,18 @@ session_start();
                 form.classList.add('was-validated');
             }, false);
         })();
+
+<?php if ($message): ?>
+    <script>
+        alert("<?php echo $message; ?>");
+        // Reset form after alert
+        document.getElementById('donationForm').reset();
+        var gcashQR = document.getElementById('gcashQR');
+        var paypalQR = document.getElementById('paypalQR');
+        gcashQR.style.display = 'none';
+        paypalQR.style.display = 'none';
+        document.getElementById('donationForm').classList.remove('was-validated');
     </script>
+<?php endif; ?>
 </body>
 </html>
