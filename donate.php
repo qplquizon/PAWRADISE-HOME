@@ -101,7 +101,7 @@ session_start();
     <section class="donation-form-section py-5">
         <div class="container">
             <h2 class="text-center mb-4">Make a Donation</h2>
-            <form id="donationForm" action="admin_panel.php" method="POST" novalidate>
+            <form id="donationForm" action="donate.php" method="POST" novalidate>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" required />
@@ -172,7 +172,7 @@ session_start();
             }
         });
 
-        // Form validation
+        // Form validation and success popup
         (function () {
             'use strict'
             var form = document.getElementById('donationForm');
@@ -180,6 +180,15 @@ session_start();
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
+                } else {
+                    event.preventDefault();
+                    alert('Thank you! Your donation was successfully submitted.');
+                    form.reset();
+                    var gcashQR = document.getElementById('gcashQR');
+                    var paypalQR = document.getElementById('paypalQR');
+                    gcashQR.style.display = 'none';
+                    paypalQR.style.display = 'none';
+                    form.classList.remove('was-validated');
                 }
                 form.classList.add('was-validated');
             }, false);
