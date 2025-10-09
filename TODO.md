@@ -1,15 +1,9 @@
- # Adoption Feature Implementation TODO
+# TODO for Donations Page Implementation
 
-## Completed Tasks
-- [x] Create `adoption_requests` table in database with required fields
-- [x] Update `adopt.php`: Add POST method and action, add server-side validation and DB insertion, redirect to admin_panel.php on success
-- [x] Update `adopt.js`: Add client-side validation - check required fields, show warnings, highlight missing fields
-- [x] Update `admin_panel.php`: Add section to display pending adoption requests, with accept/reject buttons that update status in DB
-
-## Followup Steps
-- [x] Test form submission and validation (bug found: missing name attributes on form inputs - FIXED)
-- [x] Ensure all required fields are filled before form submission (JavaScript validation prevents empty required fields)
-- [x] Show success message on same page instead of redirecting to admin panel
-- [x] Update pet dropdown to show available pets from database instead of hardcoded options
-- [ ] Test admin accept/reject functionality (user will test manually)
-- [x] Clean up temporary files (create_adoption_table.php)
+- [x] Update donate.php to remove existing PHP backend code for donation submission
+- [x] Add donation form HTML with fields: Name, Contact Number, Amount, Payment Method (Gcash/PayPal), Reference Number
+- [x] Add client-side JavaScript validation to check all fields are filled before submission
+- [x] Display red warning messages if any field is missing on submit
+- [x] Add placeholders for QR codes (empty img src) for Gcash and PayPal, shown based on payment method selection
+- [x] Set form action to admin_panel.php with POST method
+- [x] Test the form validation and submission (user will test)

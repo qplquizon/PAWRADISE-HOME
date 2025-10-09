@@ -1,25 +1,6 @@
 <?php
 include 'config.php';
 session_start();
-
-$message = [];
-
-if(isset($_POST['submit'])){
-    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-
-    if(empty($name) || empty($email) || empty($amount) || $amount <= 0){
-        $message[] = 'Please fill all fields correctly!';
-    } else {
-        $insert = $conn->prepare("INSERT INTO donations (name, email, amount) VALUES (?, ?, ?)");
-        if($insert->execute([$name, $email, $amount])){
-            $message[] = 'Donation submitted successfully!';
-        } else {
-            $message[] = 'Donation failed!';
-        }
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -118,6 +99,55 @@ if(isset($_POST['submit'])){
         </div>
     </section>
 
+    <section class="donation-form-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-4">Make a Donation</h2>
+            <form id="donationForm" action="admin_panel.php" method="POST" novalidate>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="name" name="name" required />
+                    <div class="invalid-feedback">Please enter your name.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="contactNumber" class="form-label">Contact Number<span class="text-danger">*</span></label>
+                    <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required />
+                    <div class="invalid-feedback">Please enter your contact number.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="amount" name="amount" min="0.01" step="0.01" required />
+                    <div class="invalid-feedback">Please enter a valid donation amount.</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Payment Method<span class="text-danger">*</span></label>
+                    <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                        <option value="" selected disabled>Select a payment method</option>
+                        <option value="gcash">Gcash</option>
+                        <option value="paypal">PayPal</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment method.</div>
+                </div>
+                <div class="mb-3 qr-code-container" id="gcashQR" style="display:none;">
+                    <label class="form-label">Gcash QR Code</label>
+                    <div class="qr-placeholder border p-3 text-center">
+                        <img src="QR.jpg" alt="Gcash QR Code" style="max-width: 200px; height: auto;" />
+                    </div>
+                </div>
+                <div class="mb-3 qr-code-container" id="paypalQR" style="display:none;">
+                    <label class="form-label">PayPal QR Code</label>
+                    <div class="qr-placeholder border p-3 text-center">
+                        <!-- PayPal QR code image to be added by user -->
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="referenceNumber" class="form-label">Reference Number<span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="referenceNumber" name="referenceNumber" required />
+                    <div class="invalid-feedback">Please enter the reference number.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Donation</button>
+            </form>
+        </div>
+    </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -126,6 +156,35 @@ if(isset($_POST['submit'])){
                 window.location.href = "logout.php";
             }
         }
+
+        // Show/hide QR code based on payment method selection
+        document.getElementById('paymentMethod').addEventListener('change', function() {
+            var gcashQR = document.getElementById('gcashQR');
+            var paypalQR = document.getElementById('paypalQR');
+            if (this.value === 'gcash') {
+                gcashQR.style.display = 'block';
+                paypalQR.style.display = 'none';
+            } else if (this.value === 'paypal') {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'block';
+            } else {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'none';
+            }
+        });
+
+        // Form validation
+        (function () {
+            'use strict'
+            var form = document.getElementById('donationForm');
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        })();
     </script>
 </body>
 </html>
