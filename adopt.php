@@ -46,9 +46,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $stmt = $conn->prepare("INSERT INTO adoption_requests (first_name, last_name, email, phone, address, pet_interest, experience, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([$firstName, $lastName, $email, $phone, $address, $petInterest, $experience, $homeType]);
-            // Redirect to admin panel with success
-            header('Location: admin_panel.php?adoption_submitted=1');
-            exit;
+            // Set success message
+            $success_message = 'Adoption form submitted successfully!';
         } catch (PDOException $e) {
             $errors[] = 'Database error: ' . $e->getMessage();
         }
@@ -160,6 +159,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="col-lg-8">
                     <div class="form-container">
                         <h3 class="text-center mb-4">Adoption Application</h3>
+
+                        <?php if (isset($success_message)): ?>
+                            <div class="alert alert-success text-center mb-4">
+                                <h4><?php echo htmlspecialchars($success_message); ?></h4>
+                            </div>
+                        <?php endif; ?>
+
                         <form method="POST" action="adopt.php">
                             <div class="row">
                                 <div class="col-md-6 mb-3">

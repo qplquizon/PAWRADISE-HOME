@@ -8,5 +8,7 @@
 
 ## Followup Steps
 - [x] Test form submission and validation (bug found: missing name attributes on form inputs - FIXED)
+- [x] Ensure all required fields are filled before form submission (JavaScript validation prevents empty required fields)
+- [x] Show success message on same page instead of redirecting to admin panel
 - [ ] Test admin accept/reject functionality (user will test manually)
 - [x] Clean up temporary files (create_adoption_table.php)
