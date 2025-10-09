@@ -236,20 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="petInterest" class="form-label">Pet You're Interested In</label>
                                 <select class="form-select" id="petInterest" name="petInterest">
                                     <option value="">Select a pet...</option>
-                                    <?php
-                                    $available_pets = array_filter($all_pets, function($pet) {
-                                        return $pet['availability'] == 1;
-                                    });
-                                    ?>
-                                    <?php if(empty($available_pets)): ?>
-                                        <option disabled>No pets available</option>
-                                    <?php else: ?>
-                                        <?php foreach ($available_pets as $pet): ?>
-                                            <option value="<?php echo htmlspecialchars($pet['id']); ?>">
-                                                <?php echo htmlspecialchars($pet['name'] . ' (' . $pet['breed'] . ' ' . $pet['type'] . ')'); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
+                                    <!-- Options will be populated by JavaScript -->
                                 </select>
                             </div>
 
@@ -287,6 +274,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 window.location.href = "logout.php";
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const petSelect = document.getElementById('petInterest');
+            fetch('pets_api.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (Array.isArray(data) && data.length > 0) {
+                        data.forEach(pet => {
+                            if (pet.availability == 1) {
+                                const option = document.createElement('option');
+                                option.value = pet.id;
+                                option.textContent = `${pet.name} (${pet.breed} ${pet.type})`;
+                                petSelect.appendChild(option);
+                            }
+                        });
+                    } else {
+                        const option = document.createElement('option');
+                        option.textContent = 'No pets available';
+                        option.disabled = true;
+                        petSelect.appendChild(option);
+                    }
+                })
+                .catch(error => {
+                    const option = document.createElement('option');
+                    option.textContent = 'Error loading pets';
+                    option.disabled = true;
+                    petSelect.appendChild(option);
+                    console.error('Error fetching pets:', error);
+                });
+        });
     </script>
 </body>
 </html>
