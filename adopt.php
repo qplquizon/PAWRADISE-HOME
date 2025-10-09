@@ -281,14 +281,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             fetch('pets_api.php')
                 .then(response => response.json())
                 .then(data => {
+                    console.log('Pets data fetched:', data);
                     if (Array.isArray(data) && data.length > 0) {
                         data.forEach(pet => {
-                            if (pet.availability == 1) {
-                                const option = document.createElement('option');
-                                option.value = pet.id;
-                                option.textContent = `${pet.name} (${pet.breed} ${pet.type})`;
-                                petSelect.appendChild(option);
-                            }
+                            // Removed availability filter for debugging
+                            const option = document.createElement('option');
+                            option.value = pet.id;
+                            option.textContent = `${pet.name} (${pet.breed} ${pet.type})`;
+                            petSelect.appendChild(option);
                         });
                     } else {
                         const option = document.createElement('option');
