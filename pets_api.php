@@ -4,8 +4,8 @@ include 'config.php';
 header('Content-Type: application/json');
 
 try {
-    // Removed availability filter to return all pets
-    $pets_query = $conn->prepare("SELECT id, name, breed, type, availability FROM `pets` ORDER BY name");
+    // Adjusted query to match pets table columns (removed 'type' column)
+    $pets_query = $conn->prepare("SELECT id, name, breed, description, image, availability FROM `pets` ORDER BY name");
     $pets_query->execute();
     $available_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
     echo json_encode($available_pets);
