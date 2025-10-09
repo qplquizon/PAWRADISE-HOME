@@ -31,9 +31,12 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Fetch available pets for the dropdown
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Fetch available pets for the dropdown filtering by availability = 1
 try {
-    $pets_query = $conn->prepare("SELECT id, name, breed, type, availability FROM `pets` ORDER BY name");
+    $pets_query = $conn->prepare("SELECT id, name, breed, type FROM `pets` WHERE availability = 1 ORDER BY name");
     $pets_query->execute();
     $available_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
     echo "<!-- Available pets count: " . count($available_pets) . " -->";
