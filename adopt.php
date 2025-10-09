@@ -22,12 +22,16 @@ try {
     // Table might already exist or error, continue
 }
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Fetch available pets for the dropdown
 try {
     $pets_query = $conn->prepare("SELECT id, name, breed, type FROM `pets` WHERE availability = 1 ORDER BY name");
     $pets_query->execute();
     $available_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
+    echo "Error fetching pets: " . $e->getMessage();
     $available_pets = [];
 }
 
@@ -206,11 +210,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="petInterest" class="form-label">Pet You're Interested In</label>
                                 <select class="form-select" id="petInterest" name="petInterest">
                                     <option value="">Select a pet...</option>
-                                    <?php foreach ($available_pets as $pet): ?>
-                                        <option value="<?php echo htmlspecialchars($pet['id']); ?>">
-                                            <?php echo htmlspecialchars($pet['name'] . ' (' . $pet['breed'] . ' ' . $pet['type'] . ')'); ?>
-                                        </option>
-                                    <?php endforeach; ?>
+                                    <?php if(empty($available_pets)): ?>
+                                        <option disabled>No pets available</option>
+                                    <?php else: ?>
+                                        <?php foreach ($available_pets as $pet): ?>
+                                            <option value="<?php echo htmlspecialchars($pet['id']); ?>">
+                                                <?php echo htmlspecialchars($pet['name'] . ' (' . $pet['breed'] . ' ' . $pet['type'] . ')'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
                                 </select>
                             </div>
 
