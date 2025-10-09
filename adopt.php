@@ -34,23 +34,21 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-try {
-    $pets_query = $conn->prepare("SELECT id, name, breed, type, availability FROM `pets` ORDER BY name");
-    $pets_query->execute();
-    $all_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
-    echo "<!-- Total pets count: " . count($all_pets) . " -->";
-    echo "<!-- Pets data: " . htmlspecialchars(json_encode($all_pets)) . " -->";
-    if (empty($all_pets)) {
-        // Fallback sample pets if no pets in DB
-        $all_pets = [
-            ['id' => 1, 'name' => 'Buddy', 'breed' => 'Golden Retriever', 'type' => 'dog', 'availability' => 1],
-            ['id' => 2, 'name' => 'Whiskers', 'breed' => 'Siamese Cat', 'type' => 'cat', 'availability' => 1],
-            ['id' => 3, 'name' => 'Max', 'breed' => 'Labrador', 'type' => 'dog', 'availability' => 1],
-            ['id' => 4, 'name' => 'Luna', 'breed' => 'Persian Cat', 'type' => 'cat', 'availability' => 1]
-        ];
+// Fetch pets from pets_api.php via curl
+$all_pets = [];
+$curl = curl_init();
+curl_setopt($curl, CURLOPT_URL, "http://localhost/Pawradise/pets_api.php");
+curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+$response = curl_exec($curl);
+$http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+curl_close($curl);
+
+if ($http_code == 200 && $response) {
+    $all_pets = json_decode($response, true);
+    if (!is_array($all_pets)) {
+        $all_pets = [];
     }
-} catch (PDOException $e) {
-    echo "Error fetching pets: " . $e->getMessage();
+} else {
     // Fallback sample pets on error
     $all_pets = [
         ['id' => 1, 'name' => 'Buddy', 'breed' => 'Golden Retriever', 'type' => 'dog', 'availability' => 1],
