@@ -22,6 +22,15 @@ try {
     // Table might already exist or error, continue
 }
 
+// Fetch available pets for the dropdown
+try {
+    $pets_query = $conn->prepare("SELECT id, name, breed, type FROM `pets` WHERE availability = 1 ORDER BY name");
+    $pets_query->execute();
+    $available_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    $available_pets = [];
+}
+
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstName = trim($_POST['firstName'] ?? '');
@@ -197,12 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <label for="petInterest" class="form-label">Pet You're Interested In</label>
                                 <select class="form-select" id="petInterest" name="petInterest">
                                     <option value="">Select a pet...</option>
-                                    <option value="buddy">Buddy (Golden Retriever)</option>
-                                    <option value="whiskers">Whiskers (Tabby Cat)</option>
-                                    <option value="snoopy">Snoopy (Beagle)</option>
-                                    <option value="fluffy">Fluffy (Persian Cat)</option>
-                                    <option value="max">Max (Labrador)</option>
-                                    <option value="luna">Luna (Siamese Cat)</option>
+                                    <?php foreach ($available_pets as $pet): ?>
+                                        <option value="<?php echo htmlspecialchars($pet['id']); ?>">
+                                            <?php echo htmlspecialchars($pet['name'] . ' (' . $pet['breed'] . ' ' . $pet['type'] . ')'); ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
 
