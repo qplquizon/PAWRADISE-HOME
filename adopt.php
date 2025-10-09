@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
     if (empty($phone)) $errors[] = 'Phone number is required.';
     if (empty($address)) $errors[] = 'Address is required.';
+    if (empty($experience)) $errors[] = 'Pet ownership experience is required.';
 
     if (empty($errors)) {
         try {
@@ -187,15 +188,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="adopt.php">
+                        <form method="POST" action="adopt.php" novalidate>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName" class="form-label">First Name *</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                    <input type="text" class="form-control <?php echo in_array('First name is required.', $errors ?? []) ? 'is-invalid' : ''; ?>" id="firstName" name="firstName" required value="<?php echo htmlspecialchars($_SESSION['adoption_data']['firstName'] ?? ''); ?>">
+                                    <div class="invalid-feedback">First name is required.</div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="lastName" class="form-label">Last Name *</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                    <input type="text" class="form-control <?php echo in_array('Last name is required.', $errors ?? []) ? 'is-invalid' : ''; ?>" id="lastName" name="lastName" required value="<?php echo htmlspecialchars($_SESSION['adoption_data']['lastName'] ?? ''); ?>">
+                                    <div class="invalid-feedback">Last name is required.</div>
                                 </div>
                             </div>
 
@@ -231,8 +234,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="mb-3">
-                                <label for="experience" class="form-label">Pet Ownership Experience</label>
-                                <textarea class="form-control" id="experience" name="experience" rows="3" placeholder="Tell us about your previous pet experience..."></textarea>
+                                <label for="experience" class="form-label">Pet Ownership Experience *</label>
+                                <textarea class="form-control <?php echo in_array('Pet ownership experience is required.', $errors ?? []) ? 'is-invalid' : ''; ?>" id="experience" name="experience" rows="3" placeholder="Tell us about your previous pet experience..." required><?php echo htmlspecialchars($_SESSION['adoption_data']['experience'] ?? ''); ?></textarea>
+                                <div class="invalid-feedback">Pet ownership experience is required.</div>
                             </div>
 
                             <div class="mb-3">
