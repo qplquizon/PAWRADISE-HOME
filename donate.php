@@ -1,29 +1,6 @@
 <?php
 session_start();
-include 'config.php';
-
-$message = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-    $contactNumber = filter_var($_POST['contactNumber'], FILTER_SANITIZE_STRING);
-    $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    $paymentMethod = filter_var($_POST['paymentMethod'], FILTER_SANITIZE_STRING);
-    $referenceNumber = filter_var($_POST['referenceNumber'], FILTER_SANITIZE_STRING);
-
-    if (empty($name) || empty($contactNumber) || empty($amount) || $amount <= 0 || empty($paymentMethod) || empty($referenceNumber)) {
-        $message = 'Please fill all fields correctly!';
-    } else {
-        $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
-        if ($insert->execute([$name, $contactNumber, $amount, $paymentMethod, $referenceNumber])) {
-            $message = 'Donation submitted successfully!';
-        } else {
-            $message = 'Donation submission failed!';
-        }
-    }
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="donation-form-section py-5">
         <div class="container">
             <h2 class="text-center mb-4">Make a Donation</h2>
-            <form id="donationForm" action="donate.php" method="POST" novalidate>
+            <form id="donationForm" action="admin_panel.php" method="POST" novalidate>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
                     <input type="text" class="form-control" id="name" name="name" required />
@@ -194,7 +171,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         });
 
-        // Form validation and success popup
+        // Form validation
         (function () {
             'use strict'
             var form = document.getElementById('donationForm');
@@ -202,60 +179,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (!form.checkValidity()) {
                     event.preventDefault();
                     event.stopPropagation();
-                } else {
-                    event.preventDefault();
-                    alert('Thank you! Your donation was successfully submitted.');
-                    form.reset();
-                    var gcashQR = document.getElementById('gcashQR');
-                    var paypalQR = document.getElementById('paypalQR');
-                    gcashQR.style.display = 'none';
-                    paypalQR.style.display = 'none';
-                    form.classList.remove('was-validated');
-                    // Remove validation styles after reset
-                    setTimeout(() => {
-                        form.classList.remove('was-validated');
-                    }, 0);
                 }
-        form.classList.add('was-validated');
-    }, false);
-})();
-
-<?php if ($message): ?>
-    <style>
-        #toast {
-            visibility: hidden;
-            min-width: 250px;
-            margin-left: -125px;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            border-radius: 4px;
-            padding: 16px;
-            position: fixed;
-            z-index: 9999;
-            left: 50%;
-            bottom: 30px;
-            font-size: 17px;
-            opacity: 0;
-            transition: opacity 0.5s, visibility 0.5s;
-        }
-        #toast.show {
-            visibility: visible;
-            opacity: 1;
-        }
-    </style>
-    <div id="toast"><?php echo $message; ?></div>
-    <script>
-        function showToast() {
-            var toast = document.getElementById("toast");
-            toast.className = "show";
-            setTimeout(function() {
-                toast.className = toast.className.replace("show", "");
-            }, 3000);
-        }
-        showToast();
-    </script>
-<?php endif; ?>
+                form.classList.add('was-validated');
+            }, false);
+        })();
     </script>
 </body>
 </html>
