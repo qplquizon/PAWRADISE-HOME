@@ -164,32 +164,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName" class="form-label">First Name *</label>
-                                    <input type="text" class="form-control" id="firstName" required>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="lastName" class="form-label">Last Name *</label>
-                                    <input type="text" class="form-control" id="lastName" required>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
                                 </div>
                             </div>
 
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" required>
+                                <input type="email" class="form-control" id="email" name="email" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" id="phone" required>
+                                <input type="tel" class="form-control" id="phone" name="phone" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address *</label>
-                                <textarea class="form-control" id="address" rows="3" required></textarea>
+                                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="petInterest" class="form-label">Pet You're Interested In</label>
-                                <select class="form-select" id="petInterest">
+                                <select class="form-select" id="petInterest" name="petInterest">
                                     <option value="">Select a pet...</option>
                                     <option value="buddy">Buddy (Golden Retriever)</option>
                                     <option value="whiskers">Whiskers (Tabby Cat)</option>
@@ -202,12 +202,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <div class="mb-3">
                                 <label for="experience" class="form-label">Pet Ownership Experience</label>
-                                <textarea class="form-control" id="experience" rows="3" placeholder="Tell us about your previous pet experience..."></textarea>
+                                <textarea class="form-control" id="experience" name="experience" rows="3" placeholder="Tell us about your previous pet experience..."></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="homeType" class="form-label">Type of Home</label>
-                                <select class="form-select" id="homeType">
+                                <select class="form-select" id="homeType" name="homeType">
                                     <option value="">Select home type...</option>
                                     <option value="house">House</option>
                                     <option value="apartment">Apartment</option>

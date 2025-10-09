@@ -7,6 +7,6 @@
 - [x] Update `admin_panel.php`: Add section to display pending adoption requests, with accept/reject buttons that update status in DB
 
 ## Followup Steps
-- [ ] Test form submission and validation (user will test manually)
+- [x] Test form submission and validation (bug found: missing name attributes on form inputs - FIXED)
 - [ ] Test admin accept/reject functionality (user will test manually)
 - [x] Clean up temporary files (create_adoption_table.php)
