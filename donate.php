@@ -1,5 +1,27 @@
 <?php
 session_start();
+include 'config.php';
+
+$message = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+    $contactNumber = filter_var($_POST['contactNumber'], FILTER_SANITIZE_STRING);
+    $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+    $paymentMethod = filter_var($_POST['paymentMethod'], FILTER_SANITIZE_STRING);
+    $referenceNumber = filter_var($_POST['referenceNumber'], FILTER_SANITIZE_STRING);
+
+    if (empty($name) || empty($contactNumber) || empty($amount) || $amount <= 0 || empty($paymentMethod) || empty($referenceNumber)) {
+        $message = 'Please fill all fields correctly!';
+    } else {
+        $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
+        if ($insert->execute([$name, $contactNumber, $amount, $paymentMethod, $referenceNumber])) {
+            $message = 'Donation submitted successfully!';
+        } else {
+            $message = 'Donation submission failed!';
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -194,9 +216,46 @@ session_start();
                         form.classList.remove('was-validated');
                     }, 0);
                 }
-                form.classList.add('was-validated');
-            }, false);
-        })();
+        form.classList.add('was-validated');
+    }, false);
+})();
+
+<?php if ($message): ?>
+    <style>
+        #toast {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 16px;
+            position: fixed;
+            z-index: 9999;
+            left: 50%;
+            bottom: 30px;
+            font-size: 17px;
+            opacity: 0;
+            transition: opacity 0.5s, visibility 0.5s;
+        }
+        #toast.show {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+    <div id="toast"><?php echo $message; ?></div>
+    <script>
+        function showToast() {
+            var toast = document.getElementById("toast");
+            toast.className = "show";
+            setTimeout(function() {
+                toast.className = toast.className.replace("show", "");
+            }, 3000);
+        }
+        showToast();
+    </script>
+<?php endif; ?>
     </script>
 </body>
 </html>
