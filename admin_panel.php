@@ -108,6 +108,18 @@ if(isset($_POST['reject_adoption'])){
     $update->execute([$request_id]);
 }
 
+// Handle donation submission
+if(isset($_POST['name']) && isset($_POST['contactNumber']) && isset($_POST['amount']) && isset($_POST['paymentMethod']) && isset($_POST['referenceNumber'])){
+    $name = $_POST['name'];
+    $contact_number = $_POST['contactNumber'];
+    $amount = $_POST['amount'];
+    $payment_method = $_POST['paymentMethod'];
+    $reference_number = $_POST['referenceNumber'];
+
+    $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
+    $insert->execute([$name, $contact_number, $amount, $payment_method, $reference_number]);
+}
+
 
 try {
     $pets_query = $conn->prepare("SELECT * FROM `pets`");
@@ -126,6 +138,22 @@ try {
 } catch (PDOException $e) {
     echo "Error fetching adoption requests: " . $e->getMessage();
     $adoption_requests = [];
+}
+
+// Fetch donations
+try {
+    $donations_query = $conn->prepare("SELECT * FROM `donations` ORDER BY submitted_at DESC");
+    $donations_query->execute();
+    $donations = $donations_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching donations: " . $e->getMessage();
+    $donations = [];
+}
+
+// Calculate total donations
+$total_donations = 0;
+foreach ($donations as $donation) {
+    $total_donations += $donation['amount'];
 }
 ?>
 
@@ -309,6 +337,41 @@ try {
                 <?php endforeach; ?>
             <?php else: ?>
                 <p>No adoption requests found.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">Donations</h2>
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Total Donations</h5>
+                        <p class="card-text display-4">₱<?php echo number_format($total_donations, 2); ?></p>
+                        <p class="card-text">Total amount donated</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <?php if(count($donations) > 0): ?>
+                <?php foreach($donations as $donation): ?>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($donation['name']); ?></h5>
+                                <p class="card-text"><strong>Contact Number:</strong> <?php echo htmlspecialchars($donation['contact_number']); ?></p>
+                                <p class="card-text"><strong>Amount:</strong> ₱<?php echo number_format($donation['amount'], 2); ?></p>
+                                <p class="card-text"><strong>Payment Method:</strong> <?php echo htmlspecialchars($donation['payment_method']); ?></p>
+                                <p class="card-text"><strong>Reference Number:</strong> <?php echo htmlspecialchars($donation['reference_number']); ?></p>
+                                <p class="card-text"><strong>Submitted:</strong> <?php echo htmlspecialchars($donation['submitted_at']); ?></p>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No donations found.</p>
             <?php endif; ?>
         </div>
     </div>
