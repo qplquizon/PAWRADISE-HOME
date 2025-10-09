@@ -95,6 +95,19 @@ if(isset($_POST['delete_pet'])){
     $delete->execute([$pet_id]);
 }
 
+// Handle adoption request actions
+if(isset($_POST['accept_adoption'])){
+    $request_id = $_POST['accept_adoption'];
+    $update = $conn->prepare("UPDATE adoption_requests SET status = 'accepted' WHERE id = ?");
+    $update->execute([$request_id]);
+}
+
+if(isset($_POST['reject_adoption'])){
+    $request_id = $_POST['reject_adoption'];
+    $update = $conn->prepare("UPDATE adoption_requests SET status = 'rejected' WHERE id = ?");
+    $update->execute([$request_id]);
+}
+
 
 try {
     $pets_query = $conn->prepare("SELECT * FROM `pets`");
@@ -103,6 +116,16 @@ try {
 } catch (PDOException $e) {
     echo "Error fetching pets: " . $e->getMessage();
     $pets = [];
+}
+
+// Fetch adoption requests
+try {
+    $adoption_query = $conn->prepare("SELECT * FROM `adoption_requests` ORDER BY submitted_at DESC");
+    $adoption_query->execute();
+    $adoption_requests = $adoption_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching adoption requests: " . $e->getMessage();
+    $adoption_requests = [];
 }
 ?>
 
@@ -243,7 +266,53 @@ try {
         </div>
     </div>
 
- 
+    <div class="container mt-5">
+        <h2 class="mb-4">Adoption Requests</h2>
+        <?php if(isset($_GET['adoption_submitted'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                Adoption request submitted successfully!
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        <?php endif; ?>
+        <div class="row">
+            <?php if(count($adoption_requests) > 0): ?>
+                <?php foreach($adoption_requests as $request): ?>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($request['first_name'] . ' ' . $request['last_name']); ?></h5>
+                                <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($request['email']); ?></p>
+                                <p class="card-text"><strong>Phone:</strong> <?php echo htmlspecialchars($request['phone']); ?></p>
+                                <p class="card-text"><strong>Address:</strong> <?php echo htmlspecialchars($request['address']); ?></p>
+                                <p class="card-text"><strong>Pet Interest:</strong> <?php echo htmlspecialchars($request['pet_interest']); ?></p>
+                                <p class="card-text"><strong>Experience:</strong> <?php echo htmlspecialchars($request['experience']); ?></p>
+                                <p class="card-text"><strong>Home Type:</strong> <?php echo htmlspecialchars($request['home_type']); ?></p>
+                                <p class="card-text"><strong>Submitted:</strong> <?php echo htmlspecialchars($request['submitted_at']); ?></p>
+                                <p class="card-text">
+                                    <span class="badge <?php echo $request['status'] == 'accepted' ? 'bg-success' : ($request['status'] == 'rejected' ? 'bg-danger' : 'bg-warning'); ?>">
+                                        <?php echo ucfirst($request['status']); ?>
+                                    </span>
+                                </p>
+                                <?php if($request['status'] == 'pending'): ?>
+                                    <form method="POST" action="admin_panel.php" style="display:inline;">
+                                        <input type="hidden" name="accept_adoption" value="<?php echo htmlspecialchars($request['id']); ?>">
+                                        <button type="submit" class="btn btn-success btn-sm me-2">Accept</button>
+                                    </form>
+                                    <form method="POST" action="admin_panel.php" style="display:inline;">
+                                        <input type="hidden" name="reject_adoption" value="<?php echo htmlspecialchars($request['id']); ?>">
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No adoption requests found.</p>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">

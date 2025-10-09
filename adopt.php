@@ -1,5 +1,65 @@
 <?php
 session_start();
+include 'config.php';
+
+// Create table if not exists
+try {
+    $sql = "CREATE TABLE IF NOT EXISTS adoption_requests (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        first_name VARCHAR(255) NOT NULL,
+        last_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
+        phone VARCHAR(20) NOT NULL,
+        address TEXT NOT NULL,
+        pet_interest VARCHAR(255),
+        experience TEXT,
+        home_type VARCHAR(50),
+        status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )";
+    $conn->exec($sql);
+} catch (PDOException $e) {
+    // Table might already exist or error, continue
+}
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $firstName = trim($_POST['firstName'] ?? '');
+    $lastName = trim($_POST['lastName'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $phone = trim($_POST['phone'] ?? '');
+    $address = trim($_POST['address'] ?? '');
+    $petInterest = trim($_POST['petInterest'] ?? '');
+    $experience = trim($_POST['experience'] ?? '');
+    $homeType = trim($_POST['homeType'] ?? '');
+
+    $errors = [];
+
+    if (empty($firstName)) $errors[] = 'First name is required.';
+    if (empty($lastName)) $errors[] = 'Last name is required.';
+    if (empty($email)) $errors[] = 'Email is required.';
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
+    if (empty($phone)) $errors[] = 'Phone number is required.';
+    if (empty($address)) $errors[] = 'Address is required.';
+
+    if (empty($errors)) {
+        try {
+            $stmt = $conn->prepare("INSERT INTO adoption_requests (first_name, last_name, email, phone, address, pet_interest, experience, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$firstName, $lastName, $email, $phone, $address, $petInterest, $experience, $homeType]);
+            // Redirect to admin panel with success
+            header('Location: admin_panel.php?adoption_submitted=1');
+            exit;
+        } catch (PDOException $e) {
+            $errors[] = 'Database error: ' . $e->getMessage();
+        }
+    }
+
+    // If errors, store in session to display
+    if (!empty($errors)) {
+        $_SESSION['adoption_errors'] = $errors;
+        $_SESSION['adoption_data'] = $_POST;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,7 +160,7 @@ session_start();
                 <div class="col-lg-8">
                     <div class="form-container">
                         <h3 class="text-center mb-4">Adoption Application</h3>
-                        <form>
+                        <form method="POST" action="adopt.php">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName" class="form-label">First Name *</label>
