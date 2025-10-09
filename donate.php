@@ -189,6 +189,10 @@ session_start();
                     gcashQR.style.display = 'none';
                     paypalQR.style.display = 'none';
                     form.classList.remove('was-validated');
+                    // Remove validation styles after reset
+                    setTimeout(() => {
+                        form.classList.remove('was-validated');
+                    }, 0);
                 }
                 form.classList.add('was-validated');
             }, false);
