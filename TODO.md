@@ -2,3 +2,6 @@
 - [x] Add id="statistics" to the container holding total registrations
 - [x] Add id="animals" to the container for pet management
 - [x] Add id="donation" to the container for donations
+- [ ] Restructure to use Bootstrap tabs for separate navigation sections
+- [ ] Move h1 before nav
+- [ ] Wrap sections in tab-content and tab-pane divs

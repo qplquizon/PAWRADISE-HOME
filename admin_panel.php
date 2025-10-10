@@ -9,6 +9,9 @@ $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
 
+$total_pets = count($pets);
+$total_adoption_requests = count($adoption_requests);
+
 
 if(isset($_POST['add_pet'])){
     $name = $_POST['name'];
@@ -209,28 +212,47 @@ foreach ($donations as $donation) {
         </div>
     </nav>
 
-    <div class="container mt-5" id="statistics">
+    <div class="container mt-5">
         <h1 class="mb-4">Admin Dashboard</h1>
-        <nav class="nav nav-pills nav-fill mb-4">
-            <a class="nav-link" href="#statistics">Statistics</a>
-            <a class="nav-link" href="#animals">Our Animals</a>
-            <a class="nav-link" href="#donation">Donation</a>
+        <nav class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <a class="nav-link active" id="statistics-tab" data-bs-toggle="tab" href="#statistics" role="tab">Statistics</a>
+            <a class="nav-link" id="animals-tab" data-bs-toggle="tab" href="#animals" role="tab">Our Animals</a>
+            <a class="nav-link" id="donation-tab" data-bs-toggle="tab" href="#donation" role="tab">Donation</a>
         </nav>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Registrations</h5>
-                        <p class="card-text display-4"><?php echo $total_users; ?></p>
-                        <p class="card-text">Users have signed up</p>
+        <div class="tab-content" id="myTabContent">
+            <div class="tab-pane fade show active" id="statistics" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Registrations</h5>
+                                <p class="card-text display-4"><?php echo $total_users; ?></p>
+                                <p class="card-text">Users have signed up</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Pets</h5>
+                                <p class="card-text display-4"><?php echo $total_pets; ?></p>
+                                <p class="card-text">Pets available for adoption</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Adoption Requests</h5>
+                                <p class="card-text display-4"><?php echo $total_adoption_requests; ?></p>
+                                <p class="card-text">Requests submitted</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            
-        </div>
-    </div>
 
-    <div class="container mt-5" id="animals">
+            <div class="tab-pane fade" id="animals" role="tabpanel">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
         <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
@@ -297,9 +319,7 @@ foreach ($donations as $donation) {
                 <p>No pets found.</p>
             <?php endif; ?>
         </div>
-    </div>
 
-    <div class="container mt-5">
         <h2 class="mb-4">Adoption Requests</h2>
         <?php if(isset($_GET['adoption_submitted'])): ?>
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -344,9 +364,9 @@ foreach ($donations as $donation) {
                 <p>No adoption requests found.</p>
             <?php endif; ?>
         </div>
-    </div>
+            </div>
 
-    <div class="container mt-5" id="donation">
+            <div class="tab-pane fade" id="donation" role="tabpanel">
         <h2 class="mb-4">Donations</h2>
         <div class="row mb-4">
             <div class="col-md-4">
@@ -379,7 +399,8 @@ foreach ($donations as $donation) {
                 <p>No donations found.</p>
             <?php endif; ?>
         </div>
-    </div>
+            </div>
+        </div>
 
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
