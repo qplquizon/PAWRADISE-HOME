@@ -209,8 +209,13 @@ foreach ($donations as $donation) {
         </div>
     </nav>
 
-    <div class="container mt-5">
+    <div class="container mt-5" id="statistics">
         <h1 class="mb-4">Admin Dashboard</h1>
+        <nav class="nav nav-pills nav-fill mb-4">
+            <a class="nav-link" href="#statistics">Statistics</a>
+            <a class="nav-link" href="#animals">Our Animals</a>
+            <a class="nav-link" href="#donation">Donation</a>
+        </nav>
         <div class="row">
             <div class="col-md-4">
                 <div class="card">
@@ -225,7 +230,7 @@ foreach ($donations as $donation) {
         </div>
     </div>
 
-    <div class="container mt-5">
+    <div class="container mt-5" id="animals">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
         <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
@@ -341,7 +346,7 @@ foreach ($donations as $donation) {
         </div>
     </div>
 
-    <div class="container mt-5">
+    <div class="container mt-5" id="donation">
         <h2 class="mb-4">Donations</h2>
         <div class="row mb-4">
             <div class="col-md-4">
