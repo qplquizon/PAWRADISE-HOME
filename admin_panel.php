@@ -214,7 +214,7 @@ $total_adoption_requests = count($adoption_requests);
 
     <div class="container mt-5">
         <h1 class="mb-4">Admin Dashboard</h1>
-        <nav class="nav nav-tabs mt-3 mb-4" id="myTab" role="tablist">
+        <nav class="nav nav-tabs mt-4 mb-5" id="myTab" role="tablist">
             <a class="nav-link active" id="statistics-tab" data-bs-toggle="tab" href="#statistics" role="tab">Statistics</a>
             <a class="nav-link" id="animals-tab" data-bs-toggle="tab" href="#animals" role="tab">Our Animals</a>
             <a class="nav-link" id="donation-tab" data-bs-toggle="tab" href="#donation" role="tab">Donation</a>
