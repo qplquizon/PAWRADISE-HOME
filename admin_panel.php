@@ -9,9 +9,6 @@ $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
 
-$total_pets = count($pets);
-$total_adoption_requests = count($adoption_requests);
-
 
 if(isset($_POST['add_pet'])){
     $name = $_POST['name'];
@@ -158,6 +155,9 @@ $total_donations = 0;
 foreach ($donations as $donation) {
     $total_donations += $donation['amount'];
 }
+
+$total_pets = count($pets);
+$total_adoption_requests = count($adoption_requests);
 ?>
 
 <!DOCTYPE html>
