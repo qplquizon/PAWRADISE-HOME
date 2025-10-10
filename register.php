@@ -15,16 +15,24 @@ if(isset($_POST['submit']))
     $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
     $email = $_POST['email'];
     $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-    $pass = md5($_POST['pass']);
-    $pass = filter_var($_POST['pass'], FILTER_SANITIZE_STRING);
-    $cpass = md5($_POST['cpass']);
-    $cpass = filter_var($_POST['cpass'], FILTER_SANITIZE_STRING);
+    $pass = $_POST['pass'];
+    $cpass = $_POST['cpass'];
+
+    // Validate email format
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $message[] = 'Invalid email format!';
+    }
 
     $select = $conn->prepare("SELECT * FROM `account` WHERE email = ?");
     $select->execute([$email]);
 
     if($select->rowCount() > 0 ){
         $message[] = 'User email already exists!';
+    }
+
+    // Validate password length
+    if (strlen($pass) < 8) {
+        $message[] = 'Password must be at least 8 characters!';
     }
     elseif($pass != $cpass){
         $message[] = 'Confirm password does not match!';
@@ -106,15 +114,44 @@ if(isset($message)){
     }
 }
 ?>
-    <form action="" method="POST">
+    <form action="" method="POST" onsubmit="return validateForm()">
         <h3>Register Now</h3>
         <input type="text" name="name" class="form-control mb-2" placeholder="Enter your name" required>
-        <input type="email" name="email" class="form-control mb-2" placeholder="Enter your email" required>
-        <input type="password" name="pass" class="form-control mb-2" placeholder="Enter your password" required>
-        <input type="password" name="cpass" class="form-control mb-2" placeholder="Confirm your password" required>
+        <input type="email" name="email" class="form-control mb-2" placeholder="Enter your email" required id="email">
+        <input type="password" name="pass" class="form-control mb-2" placeholder="Enter your password" required id="pass">
+        <input type="password" name="cpass" class="form-control mb-2" placeholder="Confirm your password" required id="cpass">
         <input type="submit" name="submit" value="Register Now" class="btn btn-primary w-100">
         <p class="text-center mt-3">Already have an account? <a href="Login.php">Login</a></p>
     </form>
 </section>
+
+    <script>
+        function validateForm() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+            const cpass = document.getElementById('cpass').value;
+
+            // Email validation
+            const emailRegex = /^\S+@\S+\.\S+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return false;
+            }
+
+            // Password length validation
+            if (pass.length < 8) {
+                alert('Password must be at least 8 characters long.');
+                return false;
+            }
+
+            // Password confirmation
+            if (pass !== cpass) {
+                alert('Passwords do not match.');
+                return false;
+            }
+
+            return true;
+        }
+    </script>
 </body>
 </html>
