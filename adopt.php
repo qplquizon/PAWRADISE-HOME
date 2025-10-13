@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             // Removed availability filter for debugging
                             const option = document.createElement('option');
                             option.value = pet.id;
-                            option.textContent = `${pet.name} (${pet.breed} ${pet.type})`;
+                            option.textContent = `${pet.name} (${pet.breed})`;
                             petSelect.appendChild(option);
                         });
                     } else {
