@@ -444,7 +444,10 @@ $total_adoption_requests = count($adoption_requests);
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         <?php endif; ?>
-        <div class="row">
+        <div class="mb-3">
+            <input type="text" id="adoptionSearch" class="form-control" placeholder="Search adoption requests by name, email, phone, address, pet, experience, home type, or status..." />
+        </div>
+        <div class="row" id="adoptionRequestsRow">
             <?php if(count($adoption_requests) > 0): ?>
                 <?php foreach($adoption_requests as $request): ?>
                     <div class="col-md-6 mb-4">
@@ -629,6 +632,23 @@ $total_adoption_requests = count($adoption_requests);
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
+                }
+            });
+        });
+
+        // Adoption requests search functionality
+        document.getElementById('adoptionSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const container = document.getElementById('adoptionRequestsRow');
+            const cards = container.querySelectorAll('.col-md-6');
+
+            cards.forEach(card => {
+                const cardBody = card.querySelector('.card-body');
+                const textContent = cardBody.textContent.toLowerCase();
+                if (textContent.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
                 }
             });
         });
