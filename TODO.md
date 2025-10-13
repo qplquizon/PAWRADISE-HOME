@@ -45,3 +45,41 @@ Progress: None completed yet.
    - Test the search functionality to filter users in real-time.
 
 Progress: All steps completed.
+
+# Add Search to Donation Tab Task
+
+## Steps to Complete:
+
+1. **Add Search Input in Donation Tab**
+   - Add a search input field above the donations cards for filtering by name, contact number, or amount.
+   - Ensure the input is Bootstrap-styled and positioned appropriately.
+
+2. **Implement JavaScript Filtering**
+   - Add JavaScript to filter donation cards in real-time as the user types.
+   - Filter based on name, contact number, or amount (case-insensitive).
+
+3. **Testing**
+   - Test the donation tab to ensure the search bar appears correctly.
+   - Verify real-time filtering works for various search terms.
+   - Check edge cases like no matches or clearing the search.
+
+Progress: All steps completed.
+
+# Add Donors Table in Donation Tab Task
+
+## Steps to Complete:
+
+1. **Add Query to Fetch Donors**
+   - Add a query to fetch donor names, contact numbers, and amounts from the `donations` table.
+   - Store the results in a variable like $donors.
+
+2. **Add HTML Table in Donation Tab**
+   - Add a heading "Donors" below the cards.
+   - Add a Bootstrap table displaying the donor names, contact numbers, and amounts.
+   - Ensure the table is responsive and styled consistently.
+
+3. **Testing**
+   - Test the donation tab to ensure the table displays correctly.
+   - Verify data is fetched without errors and sanitized properly.
+
+Progress: All steps completed.

@@ -423,7 +423,10 @@ $total_adoption_requests = count($adoption_requests);
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="mb-3">
+            <input type="text" id="donationSearch" class="form-control" placeholder="Search donations by name, contact number, or amount..." />
+        </div>
+        <div class="row" id="donationsContainer">
             <?php if(count($donations) > 0): ?>
                 <?php foreach($donations as $donation): ?>
                     <div class="col-md-6 mb-4">
@@ -442,6 +445,34 @@ $total_adoption_requests = count($adoption_requests);
             <?php else: ?>
                 <p>No donations found.</p>
             <?php endif; ?>
+        </div>
+
+        <h2 class="mt-5 mb-4">Donors</h2>
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Contact Number</th>
+                        <th scope="col">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if(count($donations) > 0): ?>
+                        <?php foreach($donations as $donation): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($donation['name']); ?></td>
+                                <td><?php echo htmlspecialchars($donation['contact_number']); ?></td>
+                                <td>₱<?php echo number_format($donation['amount'], 2); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="3" class="text-center">No donors found.</td>
+                        </tr>
+                    <?php endif; ?>
+                </tbody>
+            </table>
         </div>
             </div>
         </div>
@@ -528,6 +559,24 @@ $total_adoption_requests = count($adoption_requests);
                     row.style.display = '';
                 } else {
                     row.style.display = 'none';
+                }
+            });
+        });
+
+        // Donation search functionality
+        document.getElementById('donationSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const container = document.getElementById('donationsContainer');
+            const cards = container.querySelectorAll('.col-md-6');
+
+            cards.forEach(card => {
+                const name = card.querySelector('.card-title').textContent.toLowerCase();
+                const contact = card.querySelector('.card-text').textContent.toLowerCase();
+                const amount = card.querySelector('.card-text').textContent.toLowerCase();
+                if (name.includes(searchTerm) || contact.includes(searchTerm) || amount.includes(searchTerm)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
                 }
             });
         });
