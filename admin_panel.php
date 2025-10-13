@@ -267,8 +267,11 @@ $total_adoption_requests = count($adoption_requests);
                 </div>
 
                 <h2 class="mt-5 mb-4">Registered Users</h2>
+                <div class="mb-3">
+                    <input type="text" id="userSearch" class="form-control" placeholder="Search users by name or email..." />
+                </div>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover" id="usersTable">
                         <thead class="table-dark">
                             <tr>
                                 <th scope="col">Name</th>
@@ -510,6 +513,23 @@ $total_adoption_requests = count($adoption_requests);
             document.getElementById('submitBtn').classList.remove('d-none');
             document.getElementById('updateBtn').classList.add('d-none');
             document.getElementById('cancelBtn').classList.add('d-none');
+        });
+
+        // User search functionality
+        document.getElementById('userSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const table = document.getElementById('usersTable');
+            const rows = table.querySelectorAll('tbody tr');
+
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const email = row.cells[1].textContent.toLowerCase();
+                if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

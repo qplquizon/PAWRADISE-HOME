@@ -35,8 +35,13 @@ Progress: None completed yet.
    - Add a Bootstrap table displaying the names and emails.
    - Ensure the table is responsive and styled consistently.
 
-3. **Testing**
+3. **Add Search Functionality**
+   - Add a search input field above the table for filtering users by name or email.
+   - Implement real-time filtering using JavaScript as the user types.
+
+4. **Testing**
    - Test the admin panel to ensure the table displays correctly.
    - Verify data is fetched without errors and sanitized properly.
+   - Test the search functionality to filter users in real-time.
 
 Progress: All steps completed.
