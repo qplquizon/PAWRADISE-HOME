@@ -26,7 +26,7 @@ if(isset($_POST['add_pet'])){
     $description = $_POST['description'];
     $availability = isset($_POST['availability']) ? 1 : 0;
     $type = $_POST['type'];
-
+    $featured = isset($_POST['featured']) ? 1 : 0;
 
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
@@ -38,13 +38,12 @@ if(isset($_POST['add_pet'])){
         }
     }
 
-
     try {
-        $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type) VALUES (?, ?, ?, ?, ?, ?)");
-        $insert->execute([$name, $breed, $description, $image, $availability, $type]);
+        $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
     } catch (PDOException $e) {
-        // If column 'type' doesn't exist, insert without it
-        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+        // If column 'type' or 'featured' doesn't exist, insert without it
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
             $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
             $insert->execute([$name, $breed, $description, $image, $availability]);
         } else {
@@ -61,6 +60,7 @@ if(isset($_POST['update_pet'])){
     $description = $_POST['description'];
     $availability = isset($_POST['availability']) ? 1 : 0;
     $type = $_POST['type'];
+    $featured = isset($_POST['featured']) ? 1 : 0;
 
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
@@ -75,16 +75,16 @@ if(isset($_POST['update_pet'])){
     try {
         if($image != ''){
             // Update with new image
-            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
-            $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $image, $availability, $type, $featured, $pet_id]);
         } else {
             // Update without changing image
-            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
-            $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
         }
     } catch (PDOException $e) {
-        // If column 'type' doesn't exist, update without it
-        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+        // If column 'type' or 'featured' doesn't exist, update without it
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
             if($image != ''){
                 $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ? WHERE id = ?");
                 $update->execute([$name, $breed, $description, $image, $availability, $pet_id]);
@@ -321,6 +321,10 @@ $total_adoption_requests = count($adoption_requests);
                 <input class="form-check-input" type="checkbox" id="availability" name="availability" checked />
                 <label class="form-check-label" for="availability">Available for Adoption</label>
             </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="featured" name="featured" />
+                <label class="form-check-label" for="featured">Feature in Main Page</label>
+            </div>
             <div class="mb-3">
                 <label for="type" class="form-label">Animal Type</label>
                 <select class="form-control" id="type" name="type" required>
@@ -505,6 +509,7 @@ $total_adoption_requests = count($adoption_requests);
                 document.getElementById('breed').value = pet.breed;
                 document.getElementById('description').value = pet.description;
                 document.getElementById('availability').checked = pet.availability == 1;
+                document.getElementById('featured').checked = pet.featured == 1;
                 document.getElementById('type').value = pet.type;
                 // Image input left blank for no change
 

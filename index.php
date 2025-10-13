@@ -1,5 +1,21 @@
 <?php
 session_start();
+include 'config.php';
+
+try {
+    $pets_query = $conn->prepare("SELECT * FROM `pets` WHERE availability = 1 AND featured = 1 ORDER BY id DESC LIMIT 3");
+    $pets_query->execute();
+    $featured_pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
+    // Default type to 'dog' if not set
+    foreach ($featured_pets as &$pet) {
+        if (!isset($pet['type'])) {
+            $pet['type'] = 'dog';
+        }
+    }
+} catch (PDOException $e) {
+    echo "Error fetching pets: " . $e->getMessage();
+    $featured_pets = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,50 +88,31 @@ session_start();
         <div class="container">
             <h2 class="section-title text-center mb-5">Featured Friends</h2>
             <div class="row g-4">
-                <div class="col-lg-4 col-md-6">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://images.esquiremag.ph/esquiremagph/images/2020/05/20/native-dog-breed-philippines-claws-07.jpg" alt="Tiger Commando" class="img-fluid">
+                <?php if(count($featured_pets) > 0): ?>
+                    <?php foreach($featured_pets as $pet): ?>
+                        <div class="col-lg-4 col-md-6">
+                            <div class="animal-card">
+                                <div class="animal-image">
+                                    <?php if(!empty($pet['image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($pet['image']); ?>" alt="<?php echo htmlspecialchars($pet['name']); ?>" class="img-fluid">
+                                    <?php else: ?>
+                                        <img src="uploads/default-pet.png" alt="Default Pet Image" class="img-fluid">
+                                    <?php endif; ?>
+                                </div>
+                                <div class="animal-info p-3">
+                                    <h5 class="animal-name"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                    <p class="animal-breed"><?php echo htmlspecialchars($pet['breed']); ?></p>
+                                    <p class="animal-description"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                    <span class="badge bg-primary">Available</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Tiger Commando</h5>
-                            <p class="animal-breed">Native</p>
-                            <p class="animal-description">Friendly and energetic 2-year-old who loves playing fetch.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <div class="col-12 text-center">
+                        <p>No featured pets available at the moment.</p>
                     </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://cdn.prod.website-files.com/61bbcec54a71bb14e2611c3a/66f2e01debe46444617bbc5c_66c38827de147c4896062852_62d981ff7afe26e3a32fbd29_62d19e5768e09b606317da6b_Shih%25252520Tzu%25252520Breed%25252520Profile_Hero.webp" alt="Shih Tzu" class="img-fluid">
-                        </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Whitey</h5>
-                            <p class="animal-breed">Shih Tzu</p>
-                            <p class="animal-description">Sweet and affectionate dog who zooms a lot.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-4 col-md-6 animal-item" data-category="dogs">
-                    <div class="animal-card">
-                        <div class="animal-image">
-                            <img src="https://a-z-animals.com/media/2022/06/American-Quarter-Horse-stallion.jpg" alt="Quarter Horse" class="img-fluid">
-
-                            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop" alt="Beagle" class="img-fluid">
-
-                        </div>
-                        <div class="animal-info p-3">
-                            <h5 class="animal-name">Snoopy</h5>
-                            <p class="animal-breed">Beagle</p>
-                            <p class="animal-description">Curious and friendly 3-year-old beagle with lots of energy and a great sense of smell.</p>
-                            <span class="badge bg-primary">Available</span>
-                        </div>
-                    </div>
-                </div>
+                <?php endif; ?>
             </div>
             <div class="text-center mt-4">
                 <a href="our-animals.php" class="btn btn-outline-primary">View All Animals</a>

@@ -10,7 +10,8 @@ try {
         description TEXT,
         image VARCHAR(255),
         availability TINYINT(1) DEFAULT 1,
-        type VARCHAR(50) DEFAULT 'dog'
+        type VARCHAR(50) DEFAULT 'dog',
+        featured TINYINT(1) DEFAULT 0
     )";
     $conn->exec($sql);
     echo "Pets table created successfully.<br>";
