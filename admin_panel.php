@@ -82,6 +82,7 @@ if(isset($_POST['update_pet'])){
             $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
             $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
         }
+        $_SESSION['message'] = "Pet updated successfully!";
     } catch (PDOException $e) {
         // If column 'type' or 'featured' doesn't exist, update without it
         if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
@@ -92,8 +93,9 @@ if(isset($_POST['update_pet'])){
                 $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ? WHERE id = ?");
                 $update->execute([$name, $breed, $description, $availability, $pet_id]);
             }
+            $_SESSION['message'] = "Pet updated successfully! (Note: Some fields may not have been updated due to database schema)";
         } else {
-            throw $e;
+            $_SESSION['error'] = "Error updating pet: " . $e->getMessage();
         }
     }
 }
@@ -229,6 +231,20 @@ $total_adoption_requests = count($adoption_requests);
 
     <div class="container mt-5">
         <h1 class="mb-4">Admin Dashboard</h1>
+        <?php if(isset($_SESSION['message'])): ?>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($_SESSION['message']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['message']); ?>
+        <?php endif; ?>
+        <?php if(isset($_SESSION['error'])): ?>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <?php echo htmlspecialchars($_SESSION['error']); ?>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            <?php unset($_SESSION['error']); ?>
+        <?php endif; ?>
         <nav class="nav nav-tabs mt-4 mb-5" id="myTab" role="tablist">
             <a class="nav-link active" id="statistics-tab" data-bs-toggle="tab" href="#statistics" role="tab">Statistics</a>
             <a class="nav-link" id="animals-tab" data-bs-toggle="tab" href="#animals" role="tab">Our Animals</a>
