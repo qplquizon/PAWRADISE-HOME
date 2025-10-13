@@ -21,3 +21,22 @@
    - Verify error messages display and successful registration works.
 
 Progress: None completed yet.
+
+# Admin Panel Users Table Task
+
+## Steps to Complete:
+
+1. **Add Query to Fetch Registered Users**
+   - In admin_panel.php, add a new query to fetch all registered users' names and emails from the `account` table.
+   - Store the results in a variable like $users.
+
+2. **Add HTML Table in Statistics Tab**
+   - In the "Statistics" tab, below the row of cards, add a heading "Registered Users".
+   - Add a Bootstrap table displaying the names and emails.
+   - Ensure the table is responsive and styled consistently.
+
+3. **Testing**
+   - Test the admin panel to ensure the table displays correctly.
+   - Verify data is fetched without errors and sanitized properly.
+
+Progress: All steps completed.

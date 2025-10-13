@@ -9,6 +9,16 @@ $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
 
+// Fetch registered users
+try {
+    $users_query = $conn->prepare("SELECT name, email FROM `account` ORDER BY name ASC");
+    $users_query->execute();
+    $users = $users_query->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Error fetching users: " . $e->getMessage();
+    $users = [];
+}
+
 
 if(isset($_POST['add_pet'])){
     $name = $_POST['name'];
@@ -254,6 +264,32 @@ $total_adoption_requests = count($adoption_requests);
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <h2 class="mt-5 mb-4">Registered Users</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if(count($users) > 0): ?>
+                                <?php foreach($users as $user): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['name']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="2" class="text-center">No users found.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
