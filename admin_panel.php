@@ -84,16 +84,27 @@ if(isset($_POST['update_pet'])){
         }
         $_SESSION['message'] = "Pet updated successfully!";
     } catch (PDOException $e) {
-        // If column 'type' or 'featured' doesn't exist, update without it
-        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
+        // Handle missing columns individually
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+            // Update without type, but with featured
             if($image != ''){
-                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ? WHERE id = ?");
-                $update->execute([$name, $breed, $description, $image, $availability, $pet_id]);
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, featured = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $image, $availability, $featured, $pet_id]);
             } else {
-                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ? WHERE id = ?");
-                $update->execute([$name, $breed, $description, $availability, $pet_id]);
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, featured = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $availability, $featured, $pet_id]);
             }
-            $_SESSION['message'] = "Pet updated successfully! (Note: Some fields may not have been updated due to database schema)";
+            $_SESSION['message'] = "Pet updated successfully! (Note: Type field may not have been updated due to database schema)";
+        } elseif (strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
+            // Update without featured
+            if($image != ''){
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
+            } else {
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+            }
+            $_SESSION['message'] = "Pet updated successfully! (Note: Featured field may not have been updated due to database schema)";
         } else {
             $_SESSION['error'] = "Error updating pet: " . $e->getMessage();
         }
