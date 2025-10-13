@@ -132,7 +132,7 @@ if(isset($_POST['name']) && isset($_POST['contactNumber']) && isset($_POST['amou
 
 
 try {
-    $pets_query = $conn->prepare("SELECT * FROM `pets`");
+    $pets_query = $conn->prepare("SELECT *, COALESCE(featured, 0) as featured FROM `pets`");
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
