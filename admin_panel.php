@@ -424,32 +424,10 @@ $total_adoption_requests = count($adoption_requests);
             </div>
         </div>
         <div class="mb-3">
-            <input type="text" id="donationSearch" class="form-control" placeholder="Search donations by name, contact number, or amount..." />
+            <input type="text" id="donationSearch" class="form-control" placeholder="Search donors by name, contact number, or amount..." />
         </div>
-        <div class="row" id="donationsContainer">
-            <?php if(count($donations) > 0): ?>
-                <?php foreach($donations as $donation): ?>
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><?php echo htmlspecialchars($donation['name']); ?></h5>
-                                <p class="card-text"><strong>Contact Number:</strong> <?php echo htmlspecialchars($donation['contact_number']); ?></p>
-                                <p class="card-text"><strong>Amount:</strong> ₱<?php echo number_format($donation['amount'], 2); ?></p>
-                                <p class="card-text"><strong>Payment Method:</strong> <?php echo htmlspecialchars($donation['payment_method']); ?></p>
-                                <p class="card-text"><strong>Reference Number:</strong> <?php echo htmlspecialchars($donation['reference_number']); ?></p>
-                                <p class="card-text"><strong>Submitted:</strong> <?php echo htmlspecialchars($donation['submitted_at']); ?></p>
-                            </div>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No donations found.</p>
-            <?php endif; ?>
-        </div>
-
-        <h2 class="mt-5 mb-4">Donors</h2>
         <div class="table-responsive">
-            <table class="table table-striped table-hover">
+            <table class="table table-striped table-hover" id="donorsTable">
                 <thead class="table-dark">
                     <tr>
                         <th scope="col">Name</th>
@@ -563,20 +541,20 @@ $total_adoption_requests = count($adoption_requests);
             });
         });
 
-        // Donation search functionality
+        // Donor search functionality
         document.getElementById('donationSearch').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
-            const container = document.getElementById('donationsContainer');
-            const cards = container.querySelectorAll('.col-md-6');
+            const table = document.getElementById('donorsTable');
+            const rows = table.querySelectorAll('tbody tr');
 
-            cards.forEach(card => {
-                const name = card.querySelector('.card-title').textContent.toLowerCase();
-                const contact = card.querySelector('.card-text').textContent.toLowerCase();
-                const amount = card.querySelector('.card-text').textContent.toLowerCase();
+            rows.forEach(row => {
+                const name = row.cells[0].textContent.toLowerCase();
+                const contact = row.cells[1].textContent.toLowerCase();
+                const amount = row.cells[2].textContent.toLowerCase();
                 if (name.includes(searchTerm) || contact.includes(searchTerm) || amount.includes(searchTerm)) {
-                    card.style.display = '';
+                    row.style.display = '';
                 } else {
-                    card.style.display = 'none';
+                    row.style.display = 'none';
                 }
             });
         });
