@@ -121,6 +121,17 @@ if(isset($_POST['delete_pet'])){
 // Handle adoption request actions
 if(isset($_POST['accept_adoption'])){
     $request_id = $_POST['accept_adoption'];
+    // First, get the pet_interest from the request
+    $get_pet = $conn->prepare("SELECT pet_interest FROM adoption_requests WHERE id = ?");
+    $get_pet->execute([$request_id]);
+    $pet_data = $get_pet->fetch(PDO::FETCH_ASSOC);
+    if($pet_data){
+        $pet_id = $pet_data['pet_interest'];
+        // Set pet availability to 0 (archived/not available)
+        $archive_pet = $conn->prepare("UPDATE `pets` SET availability = 0 WHERE id = ?");
+        $archive_pet->execute([$pet_id]);
+    }
+    // Update request status to accepted
     $update = $conn->prepare("UPDATE adoption_requests SET status = 'accepted' WHERE id = ?");
     $update->execute([$request_id]);
 }
@@ -364,10 +375,12 @@ $total_adoption_requests = count($adoption_requests);
             <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
         </form>
 
-        <h3 class="mb-3">Existing Pets</h3>
+        <h3 class="mb-3">Available Pets</h3>
         <div class="row">
-            <?php if(count($pets) > 0): ?>
-                <?php foreach($pets as $pet): ?>
+            <?php
+            $available_pets = array_filter($pets, function($pet) { return $pet['availability'] == 1; });
+            if(count($available_pets) > 0): ?>
+                <?php foreach($available_pets as $pet): ?>
                     <div class="col-md-4 mb-4">
                         <div class="card">
                             <?php if(!empty($pet['image'])): ?>
@@ -380,9 +393,7 @@ $total_adoption_requests = count($adoption_requests);
                                 <p class="card-text"><strong>Breed:</strong> <?php echo htmlspecialchars($pet['breed']); ?></p>
                                 <p class="card-text"><?php echo htmlspecialchars($pet['description']); ?></p>
                                 <p class="card-text">
-                                    <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
-                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
-                                    </span>
+                                    <span class="badge bg-success">Available</span>
                                 </p>
                                 <button type="button" class="btn btn-primary me-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-pet-id="<?php echo htmlspecialchars($pet['id']); ?>" data-pet-name="<?php echo htmlspecialchars($pet['name']); ?>">Delete</button>
@@ -391,7 +402,38 @@ $total_adoption_requests = count($adoption_requests);
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>No pets found.</p>
+                <p>No available pets found.</p>
+            <?php endif; ?>
+        </div>
+
+        <h3 class="mb-3">Archived Pets</h3>
+        <div class="row">
+            <?php
+            $archived_pets = array_filter($pets, function($pet) { return $pet['availability'] == 0; });
+            if(count($archived_pets) > 0): ?>
+                <?php foreach($archived_pets as $pet): ?>
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <?php if(!empty($pet['image'])): ?>
+                                <img src="<?php echo htmlspecialchars($pet['image']); ?>" class="card-img-top" alt="<?php echo htmlspecialchars($pet['name']); ?>" />
+                            <?php else: ?>
+                                <img src="uploads/default-pet.png" class="card-img-top" alt="Default Pet Image" />
+                            <?php endif; ?>
+                            <div class="card-body">
+                                <h5 class="card-title"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                <p class="card-text"><strong>Breed:</strong> <?php echo htmlspecialchars($pet['breed']); ?></p>
+                                <p class="card-text"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                <p class="card-text">
+                                    <span class="badge bg-secondary">Archived</span>
+                                </p>
+                                <button type="button" class="btn btn-primary me-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-pet-id="<?php echo htmlspecialchars($pet['id']); ?>" data-pet-name="<?php echo htmlspecialchars($pet['name']); ?>">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No archived pets found.</p>
             <?php endif; ?>
         </div>
 
