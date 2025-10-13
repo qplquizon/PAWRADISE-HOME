@@ -153,9 +153,9 @@ try {
     $pets = [];
 }
 
-// Fetch adoption requests
+// Fetch adoption requests with pet names
 try {
-    $adoption_query = $conn->prepare("SELECT * FROM `adoption_requests` ORDER BY submitted_at DESC");
+    $adoption_query = $conn->prepare("SELECT ar.*, p.name as pet_name, p.breed as pet_breed FROM `adoption_requests` ar LEFT JOIN `pets` p ON ar.pet_interest = p.id ORDER BY ar.submitted_at DESC");
     $adoption_query->execute();
     $adoption_requests = $adoption_query->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -412,7 +412,7 @@ $total_adoption_requests = count($adoption_requests);
                                 <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($request['email']); ?></p>
                                 <p class="card-text"><strong>Phone:</strong> <?php echo htmlspecialchars($request['phone']); ?></p>
                                 <p class="card-text"><strong>Address:</strong> <?php echo htmlspecialchars($request['address']); ?></p>
-                                <p class="card-text"><strong>Pet Interest:</strong> <?php echo htmlspecialchars($request['pet_interest']); ?></p>
+                                <p class="card-text"><strong>Pet Interest:</strong> <?php echo htmlspecialchars($request['pet_name'] . ' (' . $request['pet_breed'] . ')'); ?></p>
                                 <p class="card-text"><strong>Experience:</strong> <?php echo htmlspecialchars($request['experience']); ?></p>
                                 <p class="card-text"><strong>Home Type:</strong> <?php echo htmlspecialchars($request['home_type']); ?></p>
                                 <p class="card-text"><strong>Submitted:</strong> <?php echo htmlspecialchars($request['submitted_at']); ?></p>
