@@ -5,20 +5,24 @@ include 'config.php';
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-    $contactNumber = filter_var($_POST['contactNumber'], FILTER_SANITIZE_STRING);
-    $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-    $paymentMethod = filter_var($_POST['paymentMethod'], FILTER_SANITIZE_STRING);
-    $referenceNumber = filter_var($_POST['referenceNumber'], FILTER_SANITIZE_STRING);
-
-    if (empty($name) || empty($contactNumber) || empty($amount) || $amount <= 0 || empty($paymentMethod) || empty($referenceNumber)) {
-        $message = 'Please fill all fields correctly!';
+    if (!isset($_SESSION['user_id'])) {
+        $message = 'You must be logged in to make a donation!';
     } else {
-        $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
-        if ($insert->execute([$name, $contactNumber, $amount, $paymentMethod, $referenceNumber])) {
-            $message = 'Donation submitted successfully!';
+        $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+        $contactNumber = filter_var($_POST['contactNumber'], FILTER_SANITIZE_STRING);
+        $amount = filter_var($_POST['amount'], FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+        $paymentMethod = filter_var($_POST['paymentMethod'], FILTER_SANITIZE_STRING);
+        $referenceNumber = filter_var($_POST['referenceNumber'], FILTER_SANITIZE_STRING);
+
+        if (empty($name) || empty($contactNumber) || empty($amount) || $amount <= 0 || empty($paymentMethod) || empty($referenceNumber)) {
+            $message = 'Please fill all fields correctly!';
         } else {
-            $message = 'Donation submission failed!';
+            $insert = $conn->prepare("INSERT INTO donations (name, contact_number, amount, payment_method, reference_number) VALUES (?, ?, ?, ?, ?)");
+            if ($insert->execute([$name, $contactNumber, $amount, $paymentMethod, $referenceNumber])) {
+                $message = 'Donation submitted successfully!';
+            } else {
+                $message = 'Donation submission failed!';
+            }
         }
     }
 }
@@ -122,6 +126,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section class="donation-form-section py-5">
         <div class="container">
             <h2 class="text-center mb-4">Make a Donation</h2>
+            <?php if (!isset($_SESSION['user_id'])): ?>
+                <div class="alert alert-warning text-center">
+                    <h4>You're not logged in</h4>
+                    <p>Please <a href="Login.php">login</a> to make a donation.</p>
+                </div>
+            <?php else: ?>
             <form id="donationForm" action="donate.php" method="POST" novalidate>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name<span class="text-danger">*</span></label>
@@ -166,6 +176,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="submit" class="btn btn-primary">Submit Donation</button>
             </form>
+            <?php endif; ?>
         </div>
     </section>
 

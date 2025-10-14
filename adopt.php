@@ -60,33 +60,37 @@ if ($http_code == 200 && $response) {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = trim($_POST['firstName'] ?? '');
-    $lastName = trim($_POST['lastName'] ?? '');
-    $email = trim($_POST['email'] ?? '');
-    $phone = trim($_POST['phone'] ?? '');
-    $address = trim($_POST['address'] ?? '');
-    $petInterest = trim($_POST['petInterest'] ?? '');
-    $experience = trim($_POST['experience'] ?? '');
-    $homeType = trim($_POST['homeType'] ?? '');
+    if (!isset($_SESSION['user_id'])) {
+        $errors[] = 'You must be logged in to submit an adoption application!';
+    } else {
+        $firstName = trim($_POST['firstName'] ?? '');
+        $lastName = trim($_POST['lastName'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $address = trim($_POST['address'] ?? '');
+        $petInterest = trim($_POST['petInterest'] ?? '');
+        $experience = trim($_POST['experience'] ?? '');
+        $homeType = trim($_POST['homeType'] ?? '');
 
-    $errors = [];
+        $errors = [];
 
-    if (empty($firstName)) $errors[] = 'First name is required.';
-    if (empty($lastName)) $errors[] = 'Last name is required.';
-    if (empty($email)) $errors[] = 'Email is required.';
-    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
-    if (empty($phone)) $errors[] = 'Phone number is required.';
-    if (empty($address)) $errors[] = 'Address is required.';
-    if (empty($experience)) $errors[] = 'Pet ownership experience is required.';
+        if (empty($firstName)) $errors[] = 'First name is required.';
+        if (empty($lastName)) $errors[] = 'Last name is required.';
+        if (empty($email)) $errors[] = 'Email is required.';
+        elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
+        if (empty($phone)) $errors[] = 'Phone number is required.';
+        if (empty($address)) $errors[] = 'Address is required.';
+        if (empty($experience)) $errors[] = 'Pet ownership experience is required.';
 
-    if (empty($errors)) {
-        try {
-            $stmt = $conn->prepare("INSERT INTO adoption_requests (first_name, last_name, email, phone, address, pet_interest, experience, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$firstName, $lastName, $email, $phone, $address, $petInterest, $experience, $homeType]);
-            // Set success message
-            $success_message = 'Adoption form submitted successfully!';
-        } catch (PDOException $e) {
-            $errors[] = 'Database error: ' . $e->getMessage();
+        if (empty($errors)) {
+            try {
+                $stmt = $conn->prepare("INSERT INTO adoption_requests (first_name, last_name, email, phone, address, pet_interest, experience, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$firstName, $lastName, $email, $phone, $address, $petInterest, $experience, $homeType]);
+                // Set success message
+                $success_message = 'Adoption form submitted successfully!';
+            } catch (PDOException $e) {
+                $errors[] = 'Database error: ' . $e->getMessage();
+            }
         }
     }
 
@@ -196,6 +200,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="col-lg-8">
                     <div class="form-container">
                         <h3 class="text-center mb-4">Adoption Application</h3>
+                        <?php if (!isset($_SESSION['user_id'])): ?>
+                            <div class="alert alert-warning text-center">
+                                <h4>You're not logged in</h4>
+                                <p>Please <a href="Login.php">login</a> to submit an adoption application.</p>
+                            </div>
+                        <?php else: ?>
 
                         <?php if (isset($success_message)): ?>
                             <div class="alert alert-success text-center mb-4">
@@ -261,6 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <button type="submit" class="btn btn-primary btn-lg">Submit Application</button>
                             </div>
                         </form>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
