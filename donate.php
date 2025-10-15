@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                             <?php if(isset($_SESSION['user_id'])): ?>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a></li>
+                                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                             <?php else: ?>
                                 <li><a class="dropdown-item" href="Login.php">Login</a></li>
                                 <li><a class="dropdown-item" href="register.php">Register</a></li>
@@ -156,8 +156,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="mb-3">
                     <label for="contactNumber" class="form-label">Contact Number<span class="text-danger">*</span></label>
-                    <input type="tel" class="form-control" id="contactNumber" name="contactNumber" required />
-                    <div class="invalid-feedback">Please enter your contact number.</div>
+                    <input type="tel" class="form-control" id="contactNumber" name="contactNumber" pattern="^\+?[0-9\s\-\(\)]+$" required />
+                    <div class="invalid-feedback">Please enter a valid contact number (e.g., +1234567890).</div>
                 </div>
                 <div class="mb-3">
                     <label for="amount" class="form-label">Amount<span class="text-danger">*</span></label>
@@ -198,12 +198,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        function confirmLogout() {
-            if (confirm("Are you sure you want to logout?")) {
-                window.location.href = "logout.php";
-            }
-        }
-
         // Form validation
         (function () {
             'use strict'
