@@ -3,7 +3,7 @@ include 'config.php';
 session_start();
 
 try {
-    $pets_query = $conn->prepare("SELECT * FROM `pets`");
+    $pets_query = $conn->prepare("SELECT * FROM `pets` WHERE availability = 1");
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
     // Default type to 'dog' if not set
@@ -69,7 +69,7 @@ try {
                         <ul class="dropdown-menu" aria-labelledby="profileDropdown">
                             <?php if(isset($_SESSION['user_id'])): ?>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" onclick="confirmLogout()">Logout</a></li>
+                                <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                             <?php else: ?>
                                 <li><a class="dropdown-item" href="Login.php">Login</a></li>
                                 <li><a class="dropdown-item" href="register.php">Register</a></li>
@@ -95,19 +95,11 @@ try {
                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, breed, or type...">
                 </div>
             </div>
+
             <div class="row mb-4">
                 <div class="col-md-12 text-center">
-                    <div class="form-check d-inline-block me-3">
-                        <input class="form-check-input" type="checkbox" id="availableOnly" checked>
-                        <label class="form-check-label" for="availableOnly">
-                            Show only available for adoption
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-4">
-                <div class="col-md-12 text-center">
-                    <button id="filterDogs" class="btn btn-primary me-2">Dogs</button>
+                    <button id="filterAll" class="btn btn-primary me-2">All</button>
+                    <button id="filterDogs" class="btn btn-secondary me-2">Dogs</button>
                     <button id="filterCats" class="btn btn-secondary me-2">Cats</button>
                     <button id="filterOthers" class="btn btn-secondary">Other Animals</button>
                 </div>
@@ -119,7 +111,7 @@ try {
             $others = array_filter($pets, function($pet) { return $pet['type'] === 'other'; });
             ?>
 
-            <h3>Dogs</h3>
+            <h3 id="dogs-header">Dogs</h3>
             <div class="row g-4" id="dogs-container">
                 <?php if(count($dogs) > 0): ?>
                     <?php foreach($dogs as $pet): ?>
@@ -148,7 +140,7 @@ try {
                 <?php endif; ?>
             </div>
 
-            <h3>Cats</h3>
+            <h3 id="cats-header">Cats</h3>
             <div class="row g-4" id="cats-container">
                 <?php if(count($cats) > 0): ?>
                     <?php foreach($cats as $pet): ?>
@@ -177,7 +169,7 @@ try {
                 <?php endif; ?>
             </div>
 
-            <h3>Other Animals</h3>
+            <h3 id="others-header">Other Animals</h3>
             <div class="row g-4" id="others-container">
                 <?php if(count($others) > 0): ?>
                     <?php foreach($others as $pet): ?>
@@ -218,21 +210,18 @@ try {
     <script src="bootstrap.js"></script>
     <script src="our-animals.js" type="module"></script>
     <script>
-        function confirmLogout() {
-            if (confirm("Are you sure you want to logout?")) {
-                window.location.href = "logout.php";
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
-            const availableOnly = document.getElementById('availableOnly');
+            const filterAll = document.getElementById('filterAll');
             const filterDogs = document.getElementById('filterDogs');
             const filterCats = document.getElementById('filterCats');
             const filterOthers = document.getElementById('filterOthers');
             const dogsContainer = document.getElementById('dogs-container');
             const catsContainer = document.getElementById('cats-container');
             const othersContainer = document.getElementById('others-container');
+            const dogsHeader = document.getElementById('dogs-header');
+            const catsHeader = document.getElementById('cats-header');
+            const othersHeader = document.getElementById('others-header');
 
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
@@ -250,11 +239,6 @@ try {
                     return name.includes(searchTerm) || breed.includes(searchTerm) || type.includes(searchTerm);
                 });
 
-                // Filter by availability
-                if (availableOnly.checked) {
-                    filteredItems = filteredItems.filter(item => item.dataset.availability === '1');
-                }
-
                 // Separate by type
                 const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
                 const cats = filteredItems.filter(item => item.dataset.type === 'cat');
@@ -270,14 +254,55 @@ try {
                 cats.forEach(item => catsContainer.appendChild(item));
                 others.forEach(item => othersContainer.appendChild(item));
 
-                // Show/hide sections if no items
-                document.querySelector('h3').nextElementSibling.style.display = dogs.length > 0 ? 'block' : 'none';
-                document.querySelectorAll('h3')[1].nextElementSibling.style.display = cats.length > 0 ? 'block' : 'none';
-                document.querySelectorAll('h3')[2].nextElementSibling.style.display = others.length > 0 ? 'block' : 'none';
+                // Show/hide sections based on current filter
+                if (filterAll.classList.contains('btn-primary')) {
+                    // All filter active: show all sections with items
+                    dogsHeader.style.display = dogs.length > 0 ? 'block' : 'none';
+                    dogsContainer.style.display = dogs.length > 0 ? 'block' : 'none';
+                    catsHeader.style.display = cats.length > 0 ? 'block' : 'none';
+                    catsContainer.style.display = cats.length > 0 ? 'block' : 'none';
+                    othersHeader.style.display = others.length > 0 ? 'block' : 'none';
+                    othersContainer.style.display = others.length > 0 ? 'block' : 'none';
+                } else if (filterDogs.classList.contains('btn-primary')) {
+                    // Dogs filter active
+                    dogsHeader.style.display = 'block';
+                    dogsContainer.style.display = 'block';
+                    catsHeader.style.display = 'none';
+                    catsContainer.style.display = 'none';
+                    othersHeader.style.display = 'none';
+                    othersContainer.style.display = 'none';
+                } else if (filterCats.classList.contains('btn-primary')) {
+                    // Cats filter active
+                    dogsHeader.style.display = 'none';
+                    dogsContainer.style.display = 'none';
+                    catsHeader.style.display = 'block';
+                    catsContainer.style.display = 'block';
+                    othersHeader.style.display = 'none';
+                    othersContainer.style.display = 'none';
+                } else if (filterOthers.classList.contains('btn-primary')) {
+                    // Others filter active
+                    dogsHeader.style.display = 'none';
+                    dogsContainer.style.display = 'none';
+                    catsHeader.style.display = 'none';
+                    catsContainer.style.display = 'none';
+                    othersHeader.style.display = 'block';
+                    othersContainer.style.display = 'block';
+                }
             }
 
             searchInput.addEventListener('input', filterAndSort);
-            availableOnly.addEventListener('change', filterAndSort);
+
+            filterAll.addEventListener('click', () => {
+                filterAll.classList.add('btn-primary');
+                filterAll.classList.remove('btn-secondary');
+                filterDogs.classList.add('btn-secondary');
+                filterDogs.classList.remove('btn-primary');
+                filterCats.classList.add('btn-secondary');
+                filterCats.classList.remove('btn-primary');
+                filterOthers.classList.add('btn-secondary');
+                filterOthers.classList.remove('btn-primary');
+                filterAndSort();
+            });
 
             filterDogs.addEventListener('click', () => {
                 dogsContainer.style.display = 'block';
@@ -285,6 +310,8 @@ try {
                 othersContainer.style.display = 'none';
                 filterDogs.classList.add('btn-primary');
                 filterDogs.classList.remove('btn-secondary');
+                filterAll.classList.add('btn-secondary');
+                filterAll.classList.remove('btn-primary');
                 filterCats.classList.add('btn-secondary');
                 filterCats.classList.remove('btn-primary');
                 filterOthers.classList.add('btn-secondary');
@@ -297,6 +324,8 @@ try {
                 othersContainer.style.display = 'none';
                 filterCats.classList.add('btn-primary');
                 filterCats.classList.remove('btn-secondary');
+                filterAll.classList.add('btn-secondary');
+                filterAll.classList.remove('btn-primary');
                 filterDogs.classList.add('btn-secondary');
                 filterDogs.classList.remove('btn-primary');
                 filterOthers.classList.add('btn-secondary');
@@ -309,6 +338,8 @@ try {
                 othersContainer.style.display = 'block';
                 filterOthers.classList.add('btn-primary');
                 filterOthers.classList.remove('btn-secondary');
+                filterAll.classList.add('btn-secondary');
+                filterAll.classList.remove('btn-primary');
                 filterDogs.classList.add('btn-secondary');
                 filterDogs.classList.remove('btn-primary');
                 filterCats.classList.add('btn-secondary');
