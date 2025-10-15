@@ -368,6 +368,7 @@ $total_adoption_requests = count($adoption_requests);
                 <select class="form-control" id="type" name="type" required>
                     <option value="dog">Dog</option>
                     <option value="cat">Cat</option>
+                    <option value="other">Other Animals</option>
                 </select>
             </div>
             <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn">Add Pet</button>

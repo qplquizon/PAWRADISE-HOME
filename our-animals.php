@@ -108,13 +108,15 @@ try {
             <div class="row mb-4">
                 <div class="col-md-12 text-center">
                     <button id="filterDogs" class="btn btn-primary me-2">Dogs</button>
-                    <button id="filterCats" class="btn btn-secondary">Cats</button>
+                    <button id="filterCats" class="btn btn-secondary me-2">Cats</button>
+                    <button id="filterOthers" class="btn btn-secondary">Other Animals</button>
                 </div>
             </div>
 
             <?php
             $dogs = array_filter($pets, function($pet) { return $pet['type'] === 'dog'; });
             $cats = array_filter($pets, function($pet) { return $pet['type'] === 'cat'; });
+            $others = array_filter($pets, function($pet) { return $pet['type'] === 'other'; });
             ?>
 
             <h3>Dogs</h3>
@@ -174,6 +176,35 @@ try {
                     <p>No cats available at the moment.</p>
                 <?php endif; ?>
             </div>
+
+            <h3>Other Animals</h3>
+            <div class="row g-4" id="others-container">
+                <?php if(count($others) > 0): ?>
+                    <?php foreach($others as $pet): ?>
+                        <div class="col-lg-4 col-md-6 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                            <div class="animal-card">
+                                <div class="animal-image">
+                                    <?php if(!empty($pet['image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($pet['image']); ?>" alt="<?php echo htmlspecialchars($pet['name']); ?>" class="img-fluid">
+                                    <?php else: ?>
+                                        <img src="uploads/default-pet.png" alt="Default Pet Image" class="img-fluid">
+                                    <?php endif; ?>
+                                </div>
+                                <div class="animal-info p-3">
+                                    <h5 class="animal-name"><?php echo htmlspecialchars($pet['name']); ?></h5>
+                                    <p class="animal-breed"><?php echo htmlspecialchars($pet['breed']); ?></p>
+                                    <p class="animal-description"><?php echo htmlspecialchars($pet['description']); ?></p>
+                                    <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
+                                        <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p>No other animals available at the moment.</p>
+                <?php endif; ?>
+            </div>
         </div>
     </section>
 
@@ -198,14 +229,18 @@ try {
             const availableOnly = document.getElementById('availableOnly');
             const filterDogs = document.getElementById('filterDogs');
             const filterCats = document.getElementById('filterCats');
+            const filterOthers = document.getElementById('filterOthers');
             const dogsContainer = document.getElementById('dogs-container');
             const catsContainer = document.getElementById('cats-container');
+            const othersContainer = document.getElementById('others-container');
 
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
 
                 // Get all items
-                const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item')).concat(Array.from(catsContainer.querySelectorAll('.animal-item')));
+                const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item'))
+                    .concat(Array.from(catsContainer.querySelectorAll('.animal-item')))
+                    .concat(Array.from(othersContainer.querySelectorAll('.animal-item')));
 
                 // Filter by search
                 let filteredItems = allItems.filter(item => {
@@ -223,18 +258,22 @@ try {
                 // Separate by type
                 const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
                 const cats = filteredItems.filter(item => item.dataset.type === 'cat');
+                const others = filteredItems.filter(item => item.dataset.type === 'other');
 
                 // Clear containers
                 dogsContainer.innerHTML = '';
                 catsContainer.innerHTML = '';
+                othersContainer.innerHTML = '';
 
                 // Append items
                 dogs.forEach(item => dogsContainer.appendChild(item));
                 cats.forEach(item => catsContainer.appendChild(item));
+                others.forEach(item => othersContainer.appendChild(item));
 
                 // Show/hide sections if no items
                 document.querySelector('h3').nextElementSibling.style.display = dogs.length > 0 ? 'block' : 'none';
                 document.querySelectorAll('h3')[1].nextElementSibling.style.display = cats.length > 0 ? 'block' : 'none';
+                document.querySelectorAll('h3')[2].nextElementSibling.style.display = others.length > 0 ? 'block' : 'none';
             }
 
             searchInput.addEventListener('input', filterAndSort);
@@ -243,19 +282,37 @@ try {
             filterDogs.addEventListener('click', () => {
                 dogsContainer.style.display = 'block';
                 catsContainer.style.display = 'none';
+                othersContainer.style.display = 'none';
                 filterDogs.classList.add('btn-primary');
                 filterDogs.classList.remove('btn-secondary');
                 filterCats.classList.add('btn-secondary');
                 filterCats.classList.remove('btn-primary');
+                filterOthers.classList.add('btn-secondary');
+                filterOthers.classList.remove('btn-primary');
             });
 
             filterCats.addEventListener('click', () => {
                 dogsContainer.style.display = 'none';
                 catsContainer.style.display = 'block';
+                othersContainer.style.display = 'none';
                 filterCats.classList.add('btn-primary');
                 filterCats.classList.remove('btn-secondary');
                 filterDogs.classList.add('btn-secondary');
                 filterDogs.classList.remove('btn-primary');
+                filterOthers.classList.add('btn-secondary');
+                filterOthers.classList.remove('btn-primary');
+            });
+
+            filterOthers.addEventListener('click', () => {
+                dogsContainer.style.display = 'none';
+                catsContainer.style.display = 'none';
+                othersContainer.style.display = 'block';
+                filterOthers.classList.add('btn-primary');
+                filterOthers.classList.remove('btn-secondary');
+                filterDogs.classList.add('btn-secondary');
+                filterDogs.classList.remove('btn-primary');
+                filterCats.classList.add('btn-secondary');
+                filterCats.classList.remove('btn-primary');
             });
         });
     </script>
