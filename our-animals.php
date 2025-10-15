@@ -2,8 +2,14 @@
 include 'config.php';
 session_start();
 
+$is_admin = isset($_SESSION['user_id']); // Assuming logged in users have admin access
+
 try {
-    $pets_query = $conn->prepare("SELECT * FROM `pets` WHERE availability = 1");
+    if ($is_admin) {
+        $pets_query = $conn->prepare("SELECT *, COALESCE(featured, 0) as featured FROM `pets`");
+    } else {
+        $pets_query = $conn->prepare("SELECT * FROM `pets` WHERE availability = 1");
+    }
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
     // Default type to 'dog' if not set
@@ -22,6 +28,64 @@ try {
 } catch (PDOException $e) {
     echo "Error fetching pets: " . $e->getMessage();
     $pets = [];
+}
+
+if(isset($_POST['update_pet'])){
+    $pet_id = $_POST['pet_id'];
+    $name = $_POST['name'];
+    $breed = $_POST['breed'];
+    $description = $_POST['description'];
+    $availability = isset($_POST['availability']) ? 1 : 0;
+    $type = $_POST['type'];
+    $featured = isset($_POST['featured']) ? 1 : 0;
+
+    $image = '';
+    if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
+        $image_name = $_FILES['image']['name'];
+        $image_tmp = $_FILES['image']['tmp_name'];
+        $image_path = 'uploads/' . basename($image_name);
+        if(move_uploaded_file($image_tmp, $image_path)){
+            $image = $image_path;
+        }
+    }
+
+    try {
+        if($image != ''){
+            // Update with new image
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $image, $availability, $type, $featured, $pet_id]);
+        } else {
+            // Update without changing image
+            $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
+            $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
+        }
+        $_SESSION['message'] = "Pet updated successfully!";
+    } catch (PDOException $e) {
+        // Handle missing columns individually
+        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
+            // Update without type, but with featured
+            if($image != ''){
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, featured = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $image, $availability, $featured, $pet_id]);
+            } else {
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, featured = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $availability, $featured, $pet_id]);
+            }
+            $_SESSION['message'] = "Pet updated successfully! (Note: Type field may not have been updated due to database schema)";
+        } elseif (strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
+            // Update without featured
+            if($image != ''){
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
+            } else {
+                $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ? WHERE id = ?");
+                $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
+            }
+            $_SESSION['message'] = "Pet updated successfully! (Note: Featured field may not have been updated due to database schema)";
+        } else {
+            $_SESSION['error'] = "Error updating pet: " . $e->getMessage();
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -131,6 +195,9 @@ try {
                                     <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
+                                    <?php if($is_admin && $pet['availability'] == 0): ?>
+                                        <button type="button" class="btn btn-warning btn-sm mt-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -160,6 +227,9 @@ try {
                                     <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
+                                    <?php if($is_admin && $pet['availability'] == 0): ?>
+                                        <button type="button" class="btn btn-warning btn-sm mt-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
@@ -189,6 +259,9 @@ try {
                                     <span class="badge <?php echo $pet['availability'] ? 'bg-success' : 'bg-secondary'; ?>">
                                         <?php echo $pet['availability'] ? 'Available' : 'Not Available'; ?>
                                     </span>
+                                    <?php if($is_admin && $pet['availability'] == 0): ?>
+                                        <button type="button" class="btn btn-warning btn-sm mt-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
