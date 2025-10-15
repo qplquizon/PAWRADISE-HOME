@@ -427,7 +427,6 @@ $total_adoption_requests = count($adoption_requests);
                                 <p class="card-text">
                                     <span class="badge bg-secondary">Archived</span>
                                 </p>
-                                <button type="button" class="btn btn-primary me-2 edit-pet-btn" data-pet='<?php echo json_encode($pet); ?>'>Edit</button>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-pet-id="<?php echo htmlspecialchars($pet['id']); ?>" data-pet-name="<?php echo htmlspecialchars($pet['name']); ?>">Delete</button>
                             </div>
                         </div>
