@@ -164,9 +164,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div class="mb-3 qr-code-container" id="paypalQR" style="display:none;">
-                    <label class="form-label">PayPal QR Code</label>
+                    <label class="form-label">PayPal Donation Link</label>
                     <div class="qr-placeholder border p-3 text-center">
-                        <!-- PayPal QR code image to be added by user -->
+                        <a href="https://www.paypal.me/KoalemosBlake" target="_blank" class="btn btn-primary">Donate via PayPal</a>
                     </div>
                 </div>
                 <div class="mb-3">
@@ -219,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <?php if ($message): ?>
     <script>
-        alert("<?php echo $message; ?>");
+        alert(<?php echo json_encode($message); ?>);
         // Reset form after alert
         document.getElementById('donationForm').reset();
         var gcashQR = document.getElementById('gcashQR');
