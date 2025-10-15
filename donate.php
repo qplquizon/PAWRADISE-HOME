@@ -36,6 +36,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="donate.css" />
+    <script>
+        function showQR(value) {
+            var gcashQR = document.getElementById('gcashQR');
+            var paypalQR = document.getElementById('paypalQR');
+            if (value === 'gcash') {
+                gcashQR.style.display = 'block';
+                paypalQR.style.display = 'none';
+            } else if (value === 'paypal') {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'block';
+            } else {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
@@ -185,21 +201,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         function confirmLogout() {
             if (confirm("Are you sure you want to logout?")) {
                 window.location.href = "logout.php";
-            }
-        }
-
-        function showQR(value) {
-            var gcashQR = document.getElementById('gcashQR');
-            var paypalQR = document.getElementById('paypalQR');
-            if (value === 'gcash') {
-                gcashQR.style.display = 'block';
-                paypalQR.style.display = 'none';
-            } else if (value === 'paypal') {
-                gcashQR.style.display = 'none';
-                paypalQR.style.display = 'block';
-            } else {
-                gcashQR.style.display = 'none';
-                paypalQR.style.display = 'none';
             }
         }
 
