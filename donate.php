@@ -150,7 +150,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Payment Method<span class="text-danger">*</span></label>
-                    <select class="form-select" id="paymentMethod" name="paymentMethod" required>
+                    <select class="form-select" id="paymentMethod" name="paymentMethod" onchange="showQR(this.value)" required>
                         <option value="" selected disabled>Select a payment method</option>
                         <option value="gcash">Gcash</option>
                         <option value="paypal">PayPal</option>
@@ -188,23 +188,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        // Show/hide QR code based on payment method selection
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('paymentMethod').addEventListener('change', function() {
-                var gcashQR = document.getElementById('gcashQR');
-                var paypalQR = document.getElementById('paypalQR');
-                if (this.value === 'gcash') {
-                    gcashQR.style.display = 'block';
-                    paypalQR.style.display = 'none';
-                } else if (this.value === 'paypal') {
-                    gcashQR.style.display = 'none';
-                    paypalQR.style.display = 'block';
-                } else {
-                    gcashQR.style.display = 'none';
-                    paypalQR.style.display = 'none';
-                }
-            });
-        });
+        function showQR(value) {
+            var gcashQR = document.getElementById('gcashQR');
+            var paypalQR = document.getElementById('paypalQR');
+            if (value === 'gcash') {
+                gcashQR.style.display = 'block';
+                paypalQR.style.display = 'none';
+            } else if (value === 'paypal') {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'block';
+            } else {
+                gcashQR.style.display = 'none';
+                paypalQR.style.display = 'none';
+            }
+        }
 
         // Form validation
         (function () {
