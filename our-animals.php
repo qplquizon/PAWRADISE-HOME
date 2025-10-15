@@ -305,9 +305,6 @@ try {
             });
 
             filterDogs.addEventListener('click', () => {
-                dogsContainer.style.display = 'block';
-                catsContainer.style.display = 'none';
-                othersContainer.style.display = 'none';
                 filterDogs.classList.add('btn-primary');
                 filterDogs.classList.remove('btn-secondary');
                 filterAll.classList.add('btn-secondary');
@@ -316,12 +313,10 @@ try {
                 filterCats.classList.remove('btn-primary');
                 filterOthers.classList.add('btn-secondary');
                 filterOthers.classList.remove('btn-primary');
+                filterAndSort();
             });
 
             filterCats.addEventListener('click', () => {
-                dogsContainer.style.display = 'none';
-                catsContainer.style.display = 'block';
-                othersContainer.style.display = 'none';
                 filterCats.classList.add('btn-primary');
                 filterCats.classList.remove('btn-secondary');
                 filterAll.classList.add('btn-secondary');
@@ -330,12 +325,10 @@ try {
                 filterDogs.classList.remove('btn-primary');
                 filterOthers.classList.add('btn-secondary');
                 filterOthers.classList.remove('btn-primary');
+                filterAndSort();
             });
 
             filterOthers.addEventListener('click', () => {
-                dogsContainer.style.display = 'none';
-                catsContainer.style.display = 'none';
-                othersContainer.style.display = 'block';
                 filterOthers.classList.add('btn-primary');
                 filterOthers.classList.remove('btn-secondary');
                 filterAll.classList.add('btn-secondary');
@@ -344,6 +337,7 @@ try {
                 filterDogs.classList.remove('btn-primary');
                 filterCats.classList.add('btn-secondary');
                 filterCats.classList.remove('btn-primary');
+                filterAndSort();
             });
         });
     </script>
