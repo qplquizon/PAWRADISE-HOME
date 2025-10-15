@@ -207,6 +207,15 @@ $total_adoption_requests = count($adoption_requests);
         .nav-tabs .nav-link {
             margin-right: 15px;
         }
+        .nav-tabs {
+            flex-wrap: wrap;
+        }
+        @media (max-width: 576px) {
+            .nav-tabs .nav-link {
+                margin-right: 10px;
+                font-size: 0.9rem;
+            }
+        }
     </style>
 </head>
 <body>
