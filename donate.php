@@ -189,19 +189,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Show/hide QR code based on payment method selection
-        document.getElementById('paymentMethod').addEventListener('change', function() {
-            var gcashQR = document.getElementById('gcashQR');
-            var paypalQR = document.getElementById('paypalQR');
-            if (this.value === 'gcash') {
-                gcashQR.style.display = 'block';
-                paypalQR.style.display = 'none';
-            } else if (this.value === 'paypal') {
-                gcashQR.style.display = 'none';
-                paypalQR.style.display = 'block';
-            } else {
-                gcashQR.style.display = 'none';
-                paypalQR.style.display = 'none';
-            }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('paymentMethod').addEventListener('change', function() {
+                var gcashQR = document.getElementById('gcashQR');
+                var paypalQR = document.getElementById('paypalQR');
+                if (this.value === 'gcash') {
+                    gcashQR.style.display = 'block';
+                    paypalQR.style.display = 'none';
+                } else if (this.value === 'paypal') {
+                    gcashQR.style.display = 'none';
+                    paypalQR.style.display = 'block';
+                } else {
+                    gcashQR.style.display = 'none';
+                    paypalQR.style.display = 'none';
+                }
+            });
         });
 
         // Form validation
