@@ -15,10 +15,16 @@ try {
     }
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
-    // Default type to 'dog' if not set
+    // Ensure uniqueness by reindexing with id to prevent replication
+    $unique_pets = [];
+    foreach ($pets as $pet) {
+        $unique_pets[$pet['id']] = $pet;
+    }
+    $pets = array_values($unique_pets);
+    // Default type to 'other' if not set for proper categorization
     foreach ($pets as &$pet) {
-        if (!isset($pet['type'])) {
-            $pet['type'] = 'dog';
+        if (!isset($pet['type']) || empty($pet['type'])) {
+            $pet['type'] = 'other';
         }
     }
     $available_pets_count = 0;
@@ -214,7 +220,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="cats-container">
                 <?php if(count($cats) > 0): ?>
                     <?php foreach($cats as $pet): ?>
-                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -246,7 +252,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="others-container">
                 <?php if(count($others) > 0): ?>
                     <?php foreach($others as $pet): ?>
-                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
