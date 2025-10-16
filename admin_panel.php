@@ -56,20 +56,20 @@ if(isset($_POST['add_pet'])){
         $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
         $_SESSION['message'] = "Pet added successfully!";
-        header("Location: admin_panel.php?success=1");
+        header("Location: admin_panel.php");
         exit();
-    } catch (PDOException $e) {
-        // If column 'type' or 'featured' doesn't exist, insert without it
-        if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
-            $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
-            $insert->execute([$name, $breed, $description, $image, $availability]);
-            $_SESSION['message'] = "Pet added successfully!";
-            header("Location: admin_panel.php?success=1");
-            exit();
-        } else {
-            throw $e;
+        } catch (PDOException $e) {
+            // If column 'type' or 'featured' doesn't exist, insert without it
+            if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
+                $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
+                $insert->execute([$name, $breed, $description, $image, $availability]);
+                $_SESSION['message'] = "Pet added successfully!";
+                header("Location: admin_panel.php");
+                exit();
+            } else {
+                throw $e;
+            }
         }
-    }
 }
 
 
@@ -369,7 +369,7 @@ $total_adoption_requests = count($adoption_requests);
 
             <div class="tab-pane fade" id="animals" role="tabpanel">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
-        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off" onsubmit="disableSubmit(this);">
+        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off">
             <input type="text" style="display:none;" autocomplete="off">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
             <div class="mb-3">
@@ -405,8 +405,8 @@ $total_adoption_requests = count($adoption_requests);
                     <option value="other">Other Animals</option>
                 </select>
             </div>
-            <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn" onclick="this.disabled = true; this.textContent = 'Submitting...';">Add Pet</button>
-            <button type="submit" name="update_pet" class="btn btn-success d-none" id="updateBtn" onclick="this.disabled = true; this.textContent = 'Submitting...';">Update Pet</button>
+            <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn">Add Pet</button>
+            <button type="submit" name="update_pet" class="btn btn-success d-none" id="updateBtn">Update Pet</button>
             <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
         </form>
 

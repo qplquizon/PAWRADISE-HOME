@@ -85,8 +85,6 @@ if(isset($_POST['update_pet'])){
                 $update->execute([$name, $breed, $description, $availability, $featured, $pet_id]);
             }
             $_SESSION['message'] = "Pet updated successfully! (Note: Type field may not have been updated due to database schema)";
-            header("Location: our-animals.php?v=" . time());
-            exit();
         } elseif (strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
             // Update without featured
             if($image != ''){
@@ -97,14 +95,12 @@ if(isset($_POST['update_pet'])){
                 $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
             }
             $_SESSION['message'] = "Pet updated successfully! (Note: Featured field may not have been updated due to database schema)";
-            header("Location: our-animals.php?v=" . time());
-            exit();
         } else {
             $_SESSION['error'] = "Error updating pet: " . $e->getMessage();
-            header("Location: our-animals.php?v=" . time());
-            exit();
         }
     }
+    header("Location: our-animals.php?v=" . time());
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -190,18 +186,20 @@ if(isset($_POST['update_pet'])){
 
     <section class="animals-grid py-5">
         <div class="container">
+            <!-- Search Input -->
             <div class="row mb-4">
                 <div class="col-md-12">
                     <input type="text" id="searchInput" class="form-control" placeholder="Search by name, breed, or type..." autocomplete="off">
                 </div>
             </div>
 
-            <div class="row mb-4">
-                <div class="col-md-12 text-center">
-                    <button id="filterAll" class="btn btn-primary me-2">All</button>
-                    <button id="filterDogs" class="btn btn-secondary me-2">Dogs</button>
-                    <button id="filterCats" class="btn btn-secondary me-2">Cats</button>
-                    <button id="filterOthers" class="btn btn-secondary">Other Animals</button>
+            <!-- Filter Buttons -->
+            <div class="d-flex justify-content-center mb-4">
+                <div class="btn-group" role="group" aria-label="Animal Filter">
+                    <button type="button" class="btn btn-outline-primary filter-btn active" data-filter="all">All</button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="dogs">Dogs</button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="cats">Cats</button>
+                    <button type="button" class="btn btn-outline-primary filter-btn" data-filter="others">Other Animals</button>
                 </div>
             </div>
 
@@ -375,119 +373,50 @@ if(isset($_POST['update_pet'])){
     <script src="our-animals.js" type="module"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('searchInput');
-            const filterAll = document.getElementById('filterAll');
-            const filterDogs = document.getElementById('filterDogs');
-            const filterCats = document.getElementById('filterCats');
-            const filterOthers = document.getElementById('filterOthers');
-            const dogsContainer = document.getElementById('dogs-container');
-            const catsContainer = document.getElementById('cats-container');
-            const othersContainer = document.getElementById('others-container');
-            const dogsHeader = document.getElementById('dogs-header');
-            const catsHeader = document.getElementById('cats-header');
-            const othersHeader = document.getElementById('others-header');
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const animalItems = document.querySelectorAll('.animal-item');
+            const sections = [
+                { header: document.getElementById('dogs-header'), container: document.getElementById('dogs-container') },
+                { header: document.getElementById('cats-header'), container: document.getElementById('cats-container') },
+                { header: document.getElementById('others-header'), container: document.getElementById('others-container') }
+            ];
 
-            function filterAndSort() {
-                const searchTerm = searchInput.value.toLowerCase();
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const filter = this.getAttribute('data-filter');
 
-                // Get all items from all containers
-                const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item'))
-                    .concat(Array.from(catsContainer.querySelectorAll('.animal-item')))
-                    .concat(Array.from(othersContainer.querySelectorAll('.animal-item')));
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to clicked button
+                    this.classList.add('active');
 
-                // Filter by search term (name, breed, type)
-                let filteredItems = allItems.filter(item => {
-                    const name = item.dataset.name.toLowerCase();
-                    const breed = item.dataset.breed.toLowerCase();
-                    const type = item.dataset.type.toLowerCase();
-                    return name.includes(searchTerm) || breed.includes(searchTerm) || type.includes(searchTerm);
+                    // Show/hide animal items based on filter
+                    animalItems.forEach(item => {
+                        const type = item.getAttribute('data-type');
+                        if (filter === 'all' ||
+                            (filter === 'dogs' && type === 'dog') ||
+                            (filter === 'cats' && type === 'cat') ||
+                            (filter === 'others' && type !== 'dog' && type !== 'cat')) {
+                            item.classList.remove('d-none');
+                        } else {
+                            item.classList.add('d-none');
+                        }
+                    });
+
+                    // Show/hide sections based on visible items
+                    sections.forEach(section => {
+                        const visibleItems = section.container.querySelectorAll('.animal-item:not(.d-none)');
+                        if (visibleItems.length > 0) {
+                            section.header.classList.remove('d-none');
+                            section.container.classList.remove('d-none');
+                        } else {
+                            section.header.classList.add('d-none');
+                            section.container.classList.add('d-none');
+                        }
+                    });
                 });
-
-                // Separate filtered items by type
-                const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
-                const cats = filteredItems.filter(item => item.dataset.type === 'cat');
-                const others = filteredItems.filter(item => item.dataset.type !== 'dog' && item.dataset.type !== 'cat');
-
-                // Clear all containers
-                dogsContainer.innerHTML = '';
-                catsContainer.innerHTML = '';
-                othersContainer.innerHTML = '';
-
-                // Append filtered items back to their respective containers
-                dogs.forEach(item => dogsContainer.appendChild(item));
-                cats.forEach(item => catsContainer.appendChild(item));
-                others.forEach(item => othersContainer.appendChild(item));
-
-                // Determine which sections to show based on active filter
-                const activeFilter = document.querySelector('.btn-primary');
-                if (activeFilter === filterAll) {
-                    // Show all sections that have items
-                    dogsHeader.style.display = dogs.length > 0 ? 'block' : 'none';
-                    dogsContainer.style.display = dogs.length > 0 ? 'block' : 'none';
-                    catsHeader.style.display = cats.length > 0 ? 'block' : 'none';
-                    catsContainer.style.display = cats.length > 0 ? 'block' : 'none';
-                    othersHeader.style.display = others.length > 0 ? 'block' : 'none';
-                    othersContainer.style.display = others.length > 0 ? 'block' : 'none';
-                } else if (activeFilter === filterDogs) {
-                    // Show only dogs section
-                    dogsHeader.style.display = 'block';
-                    dogsContainer.style.display = 'block';
-                    catsHeader.style.display = 'none';
-                    catsContainer.style.display = 'none';
-                    othersHeader.style.display = 'none';
-                    othersContainer.style.display = 'none';
-                } else if (activeFilter === filterCats) {
-                    // Show only cats section
-                    dogsHeader.style.display = 'none';
-                    dogsContainer.style.display = 'none';
-                    catsHeader.style.display = 'block';
-                    catsContainer.style.display = 'block';
-                    othersHeader.style.display = 'none';
-                    othersContainer.style.display = 'none';
-                } else if (activeFilter === filterOthers) {
-                    // Show only others section
-                    dogsHeader.style.display = 'none';
-                    dogsContainer.style.display = 'none';
-                    catsHeader.style.display = 'none';
-                    catsContainer.style.display = 'none';
-                    othersHeader.style.display = 'block';
-                    othersContainer.style.display = 'block';
-                }
-            }
-
-            // Event listeners for search input
-            searchInput.addEventListener('input', filterAndSort);
-
-            // Event listeners for filter buttons
-            filterAll.addEventListener('click', () => {
-                setActiveFilter(filterAll);
-                filterAndSort();
             });
-
-            filterDogs.addEventListener('click', () => {
-                setActiveFilter(filterDogs);
-                filterAndSort();
-            });
-
-            filterCats.addEventListener('click', () => {
-                setActiveFilter(filterCats);
-                filterAndSort();
-            });
-
-            filterOthers.addEventListener('click', () => {
-                setActiveFilter(filterOthers);
-                filterAndSort();
-            });
-
-            // Helper function to set active filter button
-            function setActiveFilter(activeBtn) {
-                [filterAll, filterDogs, filterCats, filterOthers].forEach(btn => {
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-secondary');
-                });
-                activeBtn.classList.remove('btn-secondary');
-                activeBtn.classList.add('btn-primary');
-            }
 
             // Handle edit pet button clicks
             document.querySelectorAll('.edit-pet-btn').forEach(button => {
