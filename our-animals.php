@@ -179,9 +179,9 @@ if(isset($_POST['update_pet'])){
             </div>
 
             <?php
-            $dogs = array_filter($pets, function($pet) { return $pet['type'] === 'dog'; });
-            $cats = array_filter($pets, function($pet) { return $pet['type'] === 'cat'; });
-            $others = array_filter($pets, function($pet) { return $pet['type'] === 'other'; });
+            $dogs = array_filter($pets, function($pet) { return strtolower($pet['type']) === 'dog'; });
+            $cats = array_filter($pets, function($pet) { return strtolower($pet['type']) === 'cat'; });
+            $others = array_filter($pets, function($pet) { return !in_array(strtolower($pet['type']), ['dog', 'cat']); });
             ?>
 
             <h3 id="dogs-header">Dogs</h3>
@@ -308,12 +308,12 @@ if(isset($_POST['update_pet'])){
             function filterAndSort() {
                 const searchTerm = searchInput.value.toLowerCase();
 
-                // Get all items
+                // Get all items from all containers
                 const allItems = Array.from(dogsContainer.querySelectorAll('.animal-item'))
                     .concat(Array.from(catsContainer.querySelectorAll('.animal-item')))
                     .concat(Array.from(othersContainer.querySelectorAll('.animal-item')));
 
-                // Filter by search
+                // Filter by search term (name, breed, type)
                 let filteredItems = allItems.filter(item => {
                     const name = item.dataset.name.toLowerCase();
                     const breed = item.dataset.breed.toLowerCase();
@@ -321,48 +321,49 @@ if(isset($_POST['update_pet'])){
                     return name.includes(searchTerm) || breed.includes(searchTerm) || type.includes(searchTerm);
                 });
 
-                // Separate by type
+                // Separate filtered items by type
                 const dogs = filteredItems.filter(item => item.dataset.type === 'dog');
                 const cats = filteredItems.filter(item => item.dataset.type === 'cat');
-                const others = filteredItems.filter(item => item.dataset.type === 'other');
+                const others = filteredItems.filter(item => item.dataset.type !== 'dog' && item.dataset.type !== 'cat');
 
-                // Clear containers
+                // Clear all containers
                 dogsContainer.innerHTML = '';
                 catsContainer.innerHTML = '';
                 othersContainer.innerHTML = '';
 
-                // Append items
+                // Append filtered items back to their respective containers
                 dogs.forEach(item => dogsContainer.appendChild(item));
                 cats.forEach(item => catsContainer.appendChild(item));
                 others.forEach(item => othersContainer.appendChild(item));
 
-                // Show/hide sections based on current filter
-                if (filterAll.classList.contains('btn-primary')) {
-                    // All filter active: show all sections with items
+                // Determine which sections to show based on active filter
+                const activeFilter = document.querySelector('.btn-primary');
+                if (activeFilter === filterAll) {
+                    // Show all sections that have items
                     dogsHeader.style.display = dogs.length > 0 ? 'block' : 'none';
                     dogsContainer.style.display = dogs.length > 0 ? 'block' : 'none';
                     catsHeader.style.display = cats.length > 0 ? 'block' : 'none';
                     catsContainer.style.display = cats.length > 0 ? 'block' : 'none';
                     othersHeader.style.display = others.length > 0 ? 'block' : 'none';
                     othersContainer.style.display = others.length > 0 ? 'block' : 'none';
-                } else if (filterDogs.classList.contains('btn-primary')) {
-                    // Dogs filter active
+                } else if (activeFilter === filterDogs) {
+                    // Show only dogs section
                     dogsHeader.style.display = 'block';
                     dogsContainer.style.display = 'block';
                     catsHeader.style.display = 'none';
                     catsContainer.style.display = 'none';
                     othersHeader.style.display = 'none';
                     othersContainer.style.display = 'none';
-                } else if (filterCats.classList.contains('btn-primary')) {
-                    // Cats filter active
+                } else if (activeFilter === filterCats) {
+                    // Show only cats section
                     dogsHeader.style.display = 'none';
                     dogsContainer.style.display = 'none';
                     catsHeader.style.display = 'block';
                     catsContainer.style.display = 'block';
                     othersHeader.style.display = 'none';
                     othersContainer.style.display = 'none';
-                } else if (filterOthers.classList.contains('btn-primary')) {
-                    // Others filter active
+                } else if (activeFilter === filterOthers) {
+                    // Show only others section
                     dogsHeader.style.display = 'none';
                     dogsContainer.style.display = 'none';
                     catsHeader.style.display = 'none';
@@ -372,55 +373,39 @@ if(isset($_POST['update_pet'])){
                 }
             }
 
+            // Event listeners for search input
             searchInput.addEventListener('input', filterAndSort);
 
+            // Event listeners for filter buttons
             filterAll.addEventListener('click', () => {
-                filterAll.classList.add('btn-primary');
-                filterAll.classList.remove('btn-secondary');
-                filterDogs.classList.add('btn-secondary');
-                filterDogs.classList.remove('btn-primary');
-                filterCats.classList.add('btn-secondary');
-                filterCats.classList.remove('btn-primary');
-                filterOthers.classList.add('btn-secondary');
-                filterOthers.classList.remove('btn-primary');
+                setActiveFilter(filterAll);
                 filterAndSort();
             });
 
             filterDogs.addEventListener('click', () => {
-                filterDogs.classList.add('btn-primary');
-                filterDogs.classList.remove('btn-secondary');
-                filterAll.classList.add('btn-secondary');
-                filterAll.classList.remove('btn-primary');
-                filterCats.classList.add('btn-secondary');
-                filterCats.classList.remove('btn-primary');
-                filterOthers.classList.add('btn-secondary');
-                filterOthers.classList.remove('btn-primary');
+                setActiveFilter(filterDogs);
                 filterAndSort();
             });
 
             filterCats.addEventListener('click', () => {
-                filterCats.classList.add('btn-primary');
-                filterCats.classList.remove('btn-secondary');
-                filterAll.classList.add('btn-secondary');
-                filterAll.classList.remove('btn-primary');
-                filterDogs.classList.add('btn-secondary');
-                filterDogs.classList.remove('btn-primary');
-                filterOthers.classList.add('btn-secondary');
-                filterOthers.classList.remove('btn-primary');
+                setActiveFilter(filterCats);
                 filterAndSort();
             });
 
             filterOthers.addEventListener('click', () => {
-                filterOthers.classList.add('btn-primary');
-                filterOthers.classList.remove('btn-secondary');
-                filterAll.classList.add('btn-secondary');
-                filterAll.classList.remove('btn-primary');
-                filterDogs.classList.add('btn-secondary');
-                filterDogs.classList.remove('btn-primary');
-                filterCats.classList.add('btn-secondary');
-                filterCats.classList.remove('btn-primary');
+                setActiveFilter(filterOthers);
                 filterAndSort();
             });
+
+            // Helper function to set active filter button
+            function setActiveFilter(activeBtn) {
+                [filterAll, filterDogs, filterCats, filterOthers].forEach(btn => {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-secondary');
+                });
+                activeBtn.classList.remove('btn-secondary');
+                activeBtn.classList.add('btn-primary');
+            }
         });
     </script>
 </body>
