@@ -182,7 +182,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="dogs-container">
                 <?php if(count($dogs) > 0): ?>
                     <?php foreach($dogs as $pet): ?>
-                        <div class="col-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -214,7 +214,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="cats-container">
                 <?php if(count($cats) > 0): ?>
                     <?php foreach($cats as $pet): ?>
-                        <div class="col-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -246,7 +246,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="others-container">
                 <?php if(count($others) > 0): ?>
                     <?php foreach($others as $pet): ?>
-                        <div class="col-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
