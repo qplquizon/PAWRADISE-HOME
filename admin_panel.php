@@ -44,7 +44,7 @@ if(isset($_POST['add_pet'])){
         $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
         $_SESSION['message'] = "Pet added successfully!";
-        header("Location: admin_panel.php");
+        header("Location: admin_panel.php?success=1");
         exit();
     } catch (PDOException $e) {
         // If column 'type' or 'featured' doesn't exist, insert without it
@@ -52,7 +52,7 @@ if(isset($_POST['add_pet'])){
             $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
             $insert->execute([$name, $breed, $description, $image, $availability]);
             $_SESSION['message'] = "Pet added successfully!";
-            header("Location: admin_panel.php");
+            header("Location: admin_panel.php?success=1");
             exit();
         } else {
             throw $e;
