@@ -1,5 +1,7 @@
 <?php
-// echo "PHP is working";
+header("Cache-Control: no-cache, no-store, must-revalidate");
+header("Pragma: no-cache");
+header("Expires: 0");
 include 'config.php';
 session_start();
 
@@ -354,6 +356,7 @@ $total_adoption_requests = count($adoption_requests);
             <div class="tab-pane fade" id="animals" role="tabpanel">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
         <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off" onsubmit="disableSubmit(this);">
+            <input type="text" style="display:none;" autocomplete="off">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
             <div class="mb-3">
                 <label for="name" class="form-label">Pet Name</label>
@@ -388,8 +391,8 @@ $total_adoption_requests = count($adoption_requests);
                     <option value="other">Other Animals</option>
                 </select>
             </div>
-            <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn">Add Pet</button>
-            <button type="submit" name="update_pet" class="btn btn-success d-none" id="updateBtn">Update Pet</button>
+            <button type="submit" name="add_pet" class="btn btn-primary" id="submitBtn" onclick="this.disabled = true; this.textContent = 'Submitting...';">Add Pet</button>
+            <button type="submit" name="update_pet" class="btn btn-success d-none" id="updateBtn" onclick="this.disabled = true; this.textContent = 'Submitting...';">Update Pet</button>
             <button type="button" class="btn btn-secondary d-none" id="cancelBtn">Cancel</button>
         </form>
 
@@ -572,6 +575,17 @@ $total_adoption_requests = count($adoption_requests);
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="adopt.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Reset the form to ensure no residual data from previous submissions
+            document.getElementById('petForm').reset();
+            document.getElementById('pet_id').value = '';
+            // Additionally clear any autofilled values
+            const inputs = document.querySelectorAll('#petForm input, #petForm textarea, #petForm select');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+        });
+
         function confirmLogout() {
             if (confirm("Are you sure you want to logout?")) {
                 window.location.href = "logout.php";
@@ -584,7 +598,8 @@ $total_adoption_requests = count($adoption_requests);
                 submitBtn.disabled = true;
                 submitBtn.textContent = 'Submitting...';
             }
-            return true;
+            form.submit();
+            return false;
         }
 
         var deleteModal = document.getElementById('deleteModal');
