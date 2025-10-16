@@ -52,7 +52,9 @@ if(isset($_POST['update_pet'])){
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        $image_path = 'uploads/' . basename($image_name);
+        // Make image name unique to prevent overwrites
+        $unique_name = time() . '_' . basename($image_name);
+        $image_path = 'uploads/' . $unique_name;
         if(move_uploaded_file($image_tmp, $image_path)){
             $image = $image_path;
         }
@@ -69,6 +71,8 @@ if(isset($_POST['update_pet'])){
             $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
         }
         $_SESSION['message'] = "Pet updated successfully!";
+        header("Location: our-animals.php?v=" . time());
+        exit();
     } catch (PDOException $e) {
         // Handle missing columns individually
         if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
@@ -81,6 +85,8 @@ if(isset($_POST['update_pet'])){
                 $update->execute([$name, $breed, $description, $availability, $featured, $pet_id]);
             }
             $_SESSION['message'] = "Pet updated successfully! (Note: Type field may not have been updated due to database schema)";
+            header("Location: our-animals.php?v=" . time());
+            exit();
         } elseif (strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
             // Update without featured
             if($image != ''){
@@ -91,8 +97,12 @@ if(isset($_POST['update_pet'])){
                 $update->execute([$name, $breed, $description, $availability, $type, $pet_id]);
             }
             $_SESSION['message'] = "Pet updated successfully! (Note: Featured field may not have been updated due to database schema)";
+            header("Location: our-animals.php?v=" . time());
+            exit();
         } else {
             $_SESSION['error'] = "Error updating pet: " . $e->getMessage();
+            header("Location: our-animals.php?v=" . time());
+            exit();
         }
     }
 }
@@ -102,14 +112,31 @@ if(isset($_POST['update_pet'])){
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <title>Our Animals - Pawradise Home</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="our-animals.css" />
+    <link rel="stylesheet" href="styles.css?v=<?php echo time(); ?>" />
+    <link rel="stylesheet" href="our-animals.css?v=<?php echo time(); ?>" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
         <div class="container">
+            <?php if(isset($_SESSION['message'])): ?>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['message']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['message']); ?>
+            <?php endif; ?>
+            <?php if(isset($_SESSION['error'])): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo htmlspecialchars($_SESSION['error']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <?php unset($_SESSION['error']); ?>
+            <?php endif; ?>
             <a class="navbar-brand d-flex align-items-center" href="index.php">
                 <img src="pawradise-logo.png" alt="Pawradise Logo" class="logo-img d-inline-block align-text-top" />
                 <div class="brand-text ms-2">
@@ -188,7 +215,7 @@ if(isset($_POST['update_pet'])){
             <div class="row g-4" id="dogs-container">
                 <?php if(count($dogs) > 0): ?>
                     <?php foreach($dogs as $pet): ?>
-                        <div class="col-sm-6 col-md-4 col-lg-3 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
+                        <div class="col-sm-6 col-md-4 col-lg-4 animal-item" data-name="<?php echo htmlspecialchars(strtolower($pet['name'])); ?>" data-breed="<?php echo htmlspecialchars(strtolower($pet['breed'])); ?>" data-type="<?php echo htmlspecialchars(strtolower($pet['type'])); ?>" data-availability="<?php echo $pet['availability'] ? '1' : '0'; ?>">
                             <div class="animal-card">
                                 <div class="animal-image">
                                     <?php if(!empty($pet['image'])): ?>
@@ -289,6 +316,61 @@ if(isset($_POST['update_pet'])){
             <a href="adopt.php" class="btn btn-primary btn-lg">Start Adoption Process</a>
         </div>
     </section>
+
+    <!-- Edit Pet Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Pet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="our-animals.php" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" id="edit_pet_id" name="pet_id" value="" />
+                        <div class="mb-3">
+                            <label for="edit_name" class="form-label">Pet Name</label>
+                            <input type="text" class="form-control" id="edit_name" name="name" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_breed" class="form-label">Breed</label>
+                            <input type="text" class="form-control" id="edit_breed" name="breed" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_description" class="form-label">Description</label>
+                            <textarea class="form-control" id="edit_description" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_image" class="form-label">Picture</label>
+                            <input type="file" class="form-control" id="edit_image" name="image" accept="image/*" />
+                            <small class="form-text text-muted">Leave blank to keep existing image.</small>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="edit_availability" name="availability" />
+                            <label class="form-check-label" for="edit_availability">Available for Adoption</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_type" class="form-label">Animal Type</label>
+                            <select class="form-control" id="edit_type" name="type" required>
+                                <option value="dog">Dog</option>
+                                <option value="cat">Cat</option>
+                                <option value="other">Other Animals</option>
+                            </select>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="edit_featured" name="featured" />
+                            <label class="form-check-label" for="edit_featured">Feature in Main Page</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" name="update_pet" class="btn btn-primary">Update Pet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="bootstrap.js"></script>
     <script src="our-animals.js" type="module"></script>
     <script>
@@ -406,6 +488,23 @@ if(isset($_POST['update_pet'])){
                 activeBtn.classList.remove('btn-secondary');
                 activeBtn.classList.add('btn-primary');
             }
+
+            // Handle edit pet button clicks
+            document.querySelectorAll('.edit-pet-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const petData = JSON.parse(this.getAttribute('data-pet'));
+                    document.getElementById('edit_pet_id').value = petData.id;
+                    document.getElementById('edit_name').value = petData.name;
+                    document.getElementById('edit_breed').value = petData.breed;
+                    document.getElementById('edit_description').value = petData.description;
+                    document.getElementById('edit_type').value = petData.type;
+                    document.getElementById('edit_availability').checked = petData.availability == 1;
+                    document.getElementById('edit_featured').checked = petData.featured == 1;
+                    // Show the modal
+                    const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+                    editModal.show();
+                });
+            });
         });
     </script>
 </body>

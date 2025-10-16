@@ -30,11 +30,23 @@ if(isset($_POST['add_pet'])){
     $type = $_POST['type'];
     $featured = isset($_POST['featured']) ? 1 : 0;
 
+    // Check if a pet with the same name and breed already exists
+    $check = $conn->prepare("SELECT COUNT(*) as count FROM `pets` WHERE name = ? AND breed = ?");
+    $check->execute([$name, $breed]);
+    $result = $check->fetch(PDO::FETCH_ASSOC);
+    if ($result['count'] > 0) {
+        $_SESSION['error'] = "A pet with this name and breed already exists. Please choose a different name or breed.";
+        header("Location: admin_panel.php");
+        exit();
+    }
+
     $image = '';
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        $image_path = 'uploads/' . basename($image_name);
+        // Make image name unique to prevent overwrites
+        $unique_name = time() . '_' . basename($image_name);
+        $image_path = 'uploads/' . $unique_name;
         if(move_uploaded_file($image_tmp, $image_path)){
             $image = $image_path;
         }
@@ -74,7 +86,9 @@ if(isset($_POST['update_pet'])){
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        $image_path = 'uploads/' . basename($image_name);
+        // Make image name unique to prevent overwrites
+        $unique_name = time() . '_' . basename($image_name);
+        $image_path = 'uploads/' . $unique_name;
         if(move_uploaded_file($image_tmp, $image_path)){
             $image = $image_path;
         }
