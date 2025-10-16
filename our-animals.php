@@ -177,6 +177,7 @@ if(isset($_POST['update_pet'])){
         </div>
     </nav>
 
+    <div style="display:none;"><?php echo time(); ?></div>
     <section class="animals-hero text-center py-5">
         <div class="container">
             <h1 class="display-4 fw-bold text-white mb-4">Meet Our Animals</h1>
@@ -421,18 +422,31 @@ if(isset($_POST['update_pet'])){
             // Handle edit pet button clicks
             document.querySelectorAll('.edit-pet-btn').forEach(button => {
                 button.addEventListener('click', function() {
+                    const form = document.getElementById('editModal').querySelector('form');
+                    form.reset();
+                    // Manually clear file input as form.reset() may not clear it in all browsers
+                    document.getElementById('edit_image').value = '';
                     const petData = JSON.parse(this.getAttribute('data-pet'));
+                    // Populate the form with the new pet data
                     document.getElementById('edit_pet_id').value = petData.id;
                     document.getElementById('edit_name').value = petData.name;
                     document.getElementById('edit_breed').value = petData.breed;
                     document.getElementById('edit_description').value = petData.description;
-                    document.getElementById('edit_type').value = petData.type;
+                    document.getElementById('edit_type').value = petData.type.toLowerCase();
                     document.getElementById('edit_availability').checked = petData.availability == 1;
                     document.getElementById('edit_featured').checked = petData.featured == 1;
                     // Show the modal
                     const editModal = new bootstrap.Modal(document.getElementById('editModal'));
                     editModal.show();
                 });
+            });
+
+            // Reset the form when the modal is hidden to prevent data duplication
+            document.getElementById('editModal').addEventListener('hidden.bs.modal', function () {
+                const form = this.querySelector('form');
+                form.reset();
+                // Manually clear file input
+                document.getElementById('edit_image').value = '';
             });
         });
     </script>
