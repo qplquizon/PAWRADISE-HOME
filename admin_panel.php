@@ -41,11 +41,17 @@ if(isset($_POST['add_pet'])){
     try {
         $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
+        $_SESSION['message'] = "Pet added successfully!";
+        header("Location: admin_panel.php");
+        exit();
     } catch (PDOException $e) {
         // If column 'type' or 'featured' doesn't exist, insert without it
         if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
             $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
             $insert->execute([$name, $breed, $description, $image, $availability]);
+            $_SESSION['message'] = "Pet added successfully!";
+            header("Location: admin_panel.php");
+            exit();
         } else {
             throw $e;
         }
@@ -83,6 +89,8 @@ if(isset($_POST['update_pet'])){
             $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
         }
         $_SESSION['message'] = "Pet updated successfully!";
+        header("Location: admin_panel.php");
+        exit();
     } catch (PDOException $e) {
         // Handle missing columns individually
         if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
@@ -345,36 +353,36 @@ $total_adoption_requests = count($adoption_requests);
 
             <div class="tab-pane fade" id="animals" role="tabpanel">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
-        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm">
+        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off" onsubmit="disableSubmit(this);">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
             <div class="mb-3">
                 <label for="name" class="form-label">Pet Name</label>
-                <input type="text" class="form-control" id="name" name="name" required />
+                <input type="text" class="form-control" id="name" name="name" required autocomplete="off" />
             </div>
             <div class="mb-3">
                 <label for="breed" class="form-label">Breed</label>
-                <input type="text" class="form-control" id="breed" name="breed" required />
+                <input type="text" class="form-control" id="breed" name="breed" required autocomplete="off" />
             </div>
             <div class="mb-3">
                 <label for="description" class="form-label">Description</label>
-                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                <textarea class="form-control" id="description" name="description" rows="3" required autocomplete="off"></textarea>
             </div>
             <div class="mb-3">
                 <label for="image" class="form-label">Picture</label>
-                <input type="file" class="form-control" id="image" name="image" accept="image/*" />
+                <input type="file" class="form-control" id="image" name="image" accept="image/*" autocomplete="off" />
                 <small class="form-text text-muted">Leave blank to keep existing image.</small>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="availability" name="availability" checked />
+                <input class="form-check-input" type="checkbox" id="availability" name="availability" checked autocomplete="off" />
                 <label class="form-check-label" for="availability">Available for Adoption</label>
             </div>
             <div class="form-check mb-3">
-                <input class="form-check-input" type="checkbox" id="featured" name="featured" />
+                <input class="form-check-input" type="checkbox" id="featured" name="featured" autocomplete="off" />
                 <label class="form-check-label" for="featured">Feature in Main Page</label>
             </div>
             <div class="mb-3">
                 <label for="type" class="form-label">Animal Type</label>
-                <select class="form-control" id="type" name="type" required>
+                <select class="form-control" id="type" name="type" required autocomplete="off">
                     <option value="dog">Dog</option>
                     <option value="cat">Cat</option>
                     <option value="other">Other Animals</option>
@@ -568,6 +576,15 @@ $total_adoption_requests = count($adoption_requests);
             if (confirm("Are you sure you want to logout?")) {
                 window.location.href = "logout.php";
             }
+        }
+
+        function disableSubmit(form) {
+            const submitBtn = form.querySelector('button[type="submit"]:not(.d-none)');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
+            return true;
         }
 
         var deleteModal = document.getElementById('deleteModal');
