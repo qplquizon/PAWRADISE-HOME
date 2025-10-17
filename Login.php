@@ -20,6 +20,7 @@ $row = $select->fetch(PDO::FETCH_ASSOC);
 if($select->rowCount() > 0 && password_verify($pass, $row['password'])){
     $_SESSION['user_id'] = $row['id'];
     $_SESSION['user_email'] = $row['email'];
+    $_SESSION['user_type'] = $row['user_type'];
     if($row['user_type'] === 'admin'){
         header('location:admin_panel.php');
     } else {

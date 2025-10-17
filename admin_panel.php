@@ -42,24 +42,26 @@ if(isset($_POST['add_pet'])){
         }
     }
 
-    try {
-        $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
-                $_SESSION['message'] = "Pet added successfully!";
-                header("Location: admin_panel.php?v=" . time());
-                exit();
-        } catch (PDOException $e) {
-            // If column 'type' or 'featured' doesn't exist, insert without it
-            if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
-                $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
-                $insert->execute([$name, $breed, $description, $image, $availability]);
-                $_SESSION['message'] = "Pet added successfully!";
-                header("Location: admin_panel.php?v=" . time());
-                exit();
-            } else {
-                throw $e;
-            }
+try {
+    $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability, type, featured) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
+    $_SESSION['message'] = "Pet added successfully!";
+} catch (PDOException $e) {
+    // If column 'type' or 'featured' doesn't exist, insert without it
+    if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
+        try {
+            $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
+            $insert->execute([$name, $breed, $description, $image, $availability]);
+            $_SESSION['message'] = "Pet added successfully!";
+        } catch (PDOException $e2) {
+            $_SESSION['error'] = "Error adding pet: " . $e2->getMessage();
         }
+    } else {
+        $_SESSION['error'] = "Error adding pet: " . $e->getMessage();
+    }
+}
+header("Location: admin_panel.php?v=" . time());
+exit();
 }
 
 
@@ -359,7 +361,7 @@ $total_adoption_requests = count($adoption_requests);
 
             <div class="tab-pane fade" id="animals" role="tabpanel">
         <h2 class="mb-4">Manage Pets for Adoption</h2>
-        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off" onsubmit="document.getElementById('submitBtn').disabled = true; document.getElementById('submitBtn').textContent = 'Adding...';">
+        <form action="admin_panel.php" method="POST" enctype="multipart/form-data" class="mb-4" id="petForm" autocomplete="off">
             <input type="text" style="display:none;" autocomplete="off">
             <input type="hidden" id="pet_id" name="pet_id" value="" />
             <div class="mb-3">

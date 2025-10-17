@@ -5,7 +5,7 @@ header("Expires: 0");
 include 'config.php';
 session_start();
 
-$is_admin = isset($_SESSION['user_id']); // Assuming logged in users have admin access
+$is_admin = isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin';
 
 try {
     if ($is_admin) {
@@ -177,7 +177,6 @@ if(isset($_POST['update_pet'])){
         </div>
     </nav>
 
-    <div style="display:none;"><?php echo time(); ?></div>
     <section class="animals-hero text-center py-5">
         <div class="container">
             <h1 class="display-4 fw-bold text-white mb-4">Meet Our Animals</h1>
