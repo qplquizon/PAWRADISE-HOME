@@ -2,39 +2,10 @@
 session_start();
 include 'config.php';
 
-// Create table if not exists
-try {
-    $sql = "CREATE TABLE IF NOT EXISTS adoption_requests (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        first_name VARCHAR(255) NOT NULL,
-        last_name VARCHAR(255) NOT NULL,
-        email VARCHAR(255) NOT NULL,
-        phone VARCHAR(20) NOT NULL,
-        address TEXT NOT NULL,
-        pet_interest VARCHAR(255),
-        experience TEXT,
-        home_type VARCHAR(50),
-        status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
-        submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )";
-    $conn->exec($sql);
-} catch (PDOException $e) {
-    // Table might already exist or error, continue
-}
-
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
-// Fetch pets from pets_api.php via curl
 $all_pets = [];
 $curl = curl_init();
 curl_setopt($curl, CURLOPT_URL, "http://localhost/Pawradise/pets_api.php");
@@ -49,7 +20,7 @@ if ($http_code == 200 && $response) {
         $all_pets = [];
     }
 } else {
-    // Fallback sample pets on error
+
     $all_pets = [
         ['id' => 1, 'name' => 'Buddy', 'breed' => 'Golden Retriever', 'type' => 'dog', 'availability' => 1],
         ['id' => 2, 'name' => 'Whiskers', 'breed' => 'Siamese Cat', 'type' => 'cat', 'availability' => 1],
@@ -58,35 +29,49 @@ if ($http_code == 200 && $response) {
     ];
 }
 
-// Handle form submission
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_SESSION['user_id'])) {
         $errors[] = 'You must be logged in to submit an adoption application!';
     } else {
+        $petInterest = trim($_POST['petInterest'] ?? '');
         $firstName = trim($_POST['firstName'] ?? '');
         $lastName = trim($_POST['lastName'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $phone = trim($_POST['phone'] ?? '');
         $address = trim($_POST['address'] ?? '');
-        $petInterest = trim($_POST['petInterest'] ?? '');
-        $experience = trim($_POST['experience'] ?? '');
-        $homeType = trim($_POST['homeType'] ?? '');
+        $phone = trim($_POST['phone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $occupation = trim($_POST['occupation'] ?? '');
+        $homeType = trim($_POST['livingPlaceType'] ?? '');
+        $petsAllowed = trim($_POST['petsAllowed'] ?? '');
+        $familySupport = trim($_POST['familySupport'] ?? '');
+        $homeVisitPermission = trim($_POST['homeVisitPermission'] ?? '');
+        $otherPetsType = trim($_POST['otherPetsType'] ?? '');
+        $otherPetsCount = trim($_POST['otherPetsCount'] ?? '');
+        $spayedNeutered = trim($_POST['spayedNeutered'] ?? '');
+        $spayedNeuteredDetails = trim($_POST['spayedNeuteredDetails'] ?? '');
+        $moveWithPets = trim($_POST['moveWithPets'] ?? '');
+        $monetarySupport = trim($_POST['monetarySupport'] ?? '');
+        $secureHome = trim($_POST['secureHome'] ?? '');
+        $responsibilityCommitment = trim($_POST['responsibilityCommitment'] ?? '');
+        $careFamiliarity = trim($_POST['careFamiliarity'] ?? '');
+        $termsAgreed = isset($_POST['termsAgreed']) ? 1 : 0;
 
         $errors = [];
 
+        if (empty($petInterest)) $errors[] = 'Please select a pet.';
         if (empty($firstName)) $errors[] = 'First name is required.';
         if (empty($lastName)) $errors[] = 'Last name is required.';
         if (empty($email)) $errors[] = 'Email is required.';
         elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Invalid email format.';
-        if (empty($phone)) $errors[] = 'Phone number is required.';
         if (empty($address)) $errors[] = 'Address is required.';
-        if (empty($experience)) $errors[] = 'Pet ownership experience is required.';
+        if (!$termsAgreed) $errors[] = 'You must agree to the terms and conditions.';
 
         if (empty($errors)) {
             try {
-                $stmt = $conn->prepare("INSERT INTO adoption_requests (first_name, last_name, email, phone, address, pet_interest, experience, home_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-                $stmt->execute([$firstName, $lastName, $email, $phone, $address, $petInterest, $experience, $homeType]);
-                // Set success message
+                $stmt = $conn->prepare("INSERT INTO adoption_requests (pet_interest, first_name, last_name, address, phone, email, occupation, home_type, pets_allowed, family_support, home_visit_permission, other_pets_type, other_pets_count, spayed_neutered, spayed_neutered_details, move_with_pets, monetary_support, secure_home, responsibility_commitment, experience) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                $stmt->execute([$petInterest, $firstName, $lastName, $address, $phone, $email, $occupation, $homeType, $petsAllowed, $familySupport, $homeVisitPermission, $otherPetsType, $otherPetsCount, $spayedNeutered, $spayedNeuteredDetails, $moveWithPets, $monetarySupport, $secureHome, $responsibilityCommitment, $careFamiliarity]);
+
+
                 $success_message = 'Adoption form submitted successfully!';
             } catch (PDOException $e) {
                 $errors[] = 'Database error: ' . $e->getMessage();
@@ -94,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // If errors, store in session to display
+
     if (!empty($errors)) {
         $_SESSION['adoption_errors'] = $errors;
         $_SESSION['adoption_data'] = $_POST;
@@ -213,7 +198,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
                         <?php endif; ?>
 
-                        <form method="POST" action="adopt.php" novalidate>
+                        <form method="POST" action="adopt.php" novalidate onsubmit="return validateTerms();">
+
+                            <h4 class="mb-3">Pet you're interested</h4>
+                            <div class="mb-3">
+                                <label for="petInterest" class="form-label">Select a Pet *</label>
+                                <select class="form-select" id="petInterest" name="petInterest" required>
+                                    <option value="">Choose a pet...</option>
+
+                                </select>
+                            </div>
+
+ 
+                            <h4 class="mb-3">APPLICANT INFORMATION</h4>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="firstName" class="form-label">First Name *</label>
@@ -226,45 +223,131 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <div class="invalid-feedback">Last name is required.</div>
                                 </div>
                             </div>
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email Address *</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="phone" class="form-label">Phone Number *</label>
-                                <input type="tel" class="form-control" id="phone" name="phone" required>
-                            </div>
-
                             <div class="mb-3">
                                 <label for="address" class="form-label">Address *</label>
-                                <textarea class="form-control" id="address" name="address" rows="3" required></textarea>
+                                <textarea class="form-control" id="address" name="address" rows="3" required><?php echo htmlspecialchars($_SESSION['adoption_data']['address'] ?? ''); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" value="<?php echo htmlspecialchars($_SESSION['adoption_data']['phone'] ?? ''); ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" name="email" required value="<?php echo htmlspecialchars($_SESSION['adoption_data']['email'] ?? ''); ?>">
+                            </div>
+                            <div class="mb-3">
+                                <label for="occupation" class="form-label">Occupation</label>
+                                <input type="text" class="form-control" id="occupation" name="occupation" value="<?php echo htmlspecialchars($_SESSION['adoption_data']['occupation'] ?? ''); ?>">
                             </div>
 
+                            <!-- LIVING OCCUPATION -->
+                            <h4 class="mb-3">LIVING OCCUPATION</h4>
                             <div class="mb-3">
-                                <label for="petInterest" class="form-label">Pet You're Interested In</label>
-                                <select class="form-select" id="petInterest" name="petInterest">
-                                    <option value="">Select a pet...</option>
-                                    <!-- Options will be populated by JavaScript -->
+                                <label for="livingPlaceType" class="form-label">What type of place do you live in?</label>
+                                <select class="form-select" id="livingPlaceType" name="livingPlaceType">
+                                    <option value="">Select...</option>
+                                    <option value="house" <?php echo ($_SESSION['adoption_data']['livingPlaceType'] ?? '') == 'house' ? 'selected' : ''; ?>>House</option>
+                                    <option value="condo" <?php echo ($_SESSION['adoption_data']['livingPlaceType'] ?? '') == 'condo' ? 'selected' : ''; ?>>Condo</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="petsAllowed" class="form-label">Are you allowed to keep pets?</label>
+                                <select class="form-select" id="petsAllowed" name="petsAllowed">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['petsAllowed'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['petsAllowed'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="familySupport" class="form-label">Do all members of the family support your decision to adopt a pet?</label>
+                                <select class="form-select" id="familySupport" name="familySupport">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['familySupport'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['familySupport'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="homeVisitPermission" class="form-label">Do we have permission to visit your home?</label>
+                                <select class="form-select" id="homeVisitPermission" name="homeVisitPermission">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['homeVisitPermission'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['homeVisitPermission'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="otherPetsType" class="form-label">If you have other pets, is your pet a CAT or a DOG?</label>
+                                <select class="form-select" id="otherPetsType" name="otherPetsType">
+                                    <option value="">Select...</option>
+                                    <option value="cat" <?php echo ($_SESSION['adoption_data']['otherPetsType'] ?? '') == 'cat' ? 'selected' : ''; ?>>Cat</option>
+                                    <option value="dog" <?php echo ($_SESSION['adoption_data']['otherPetsType'] ?? '') == 'dog' ? 'selected' : ''; ?>>Dog</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="otherPetsCount" class="form-label">If you own more than one pet, kindly indicate how many cats and dogs you own</label>
+                                <textarea class="form-control" id="otherPetsCount" name="otherPetsCount" rows="2"><?php echo htmlspecialchars($_SESSION['adoption_data']['otherPetsCount'] ?? ''); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="spayedNeutered" class="form-label">Is your pet spayed/neutered?</label>
+                                <select class="form-select" id="spayedNeutered" name="spayedNeutered">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['spayedNeutered'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['spayedNeutered'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                    <option value="other" <?php echo ($_SESSION['adoption_data']['spayedNeutered'] ?? '') == 'other' ? 'selected' : ''; ?>>Other</option>
+                                </select>
+                            </div>
+                            <div class="mb-3" id="spayedNeuteredDetailsDiv" style="display: none;">
+                                <label for="spayedNeuteredDetails" class="form-label">If you own more than one pet, kindly choose other and indicate how many are spayed/neutered and how many are not yet</label>
+                                <textarea class="form-control" id="spayedNeuteredDetails" name="spayedNeuteredDetails" rows="2"><?php echo htmlspecialchars($_SESSION['adoption_data']['spayedNeuteredDetails'] ?? ''); ?></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="moveWithPets" class="form-label">If you were to move, would you take your pets with you?</label>
+                                <select class="form-select" id="moveWithPets" name="moveWithPets">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['moveWithPets'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['moveWithPets'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="monetarySupport" class="form-label">Do you have the monetary ability to support the pet (food, grooming, toys, medical expenses)?</label>
+                                <select class="form-select" id="monetarySupport" name="monetarySupport">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['monetarySupport'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['monetarySupport'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="secureHome" class="form-label">Can you ensure us that your home is sufficiently secure to keep the pet indoors?</label>
+                                <select class="form-select" id="secureHome" name="secureHome">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['secureHome'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['secureHome'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="responsibilityCommitment" class="form-label">Are you and your family committed to taking full responsibility for your pet's health and welfare for the rest of its life, which could be 10 years or more?</label>
+                                <select class="form-select" id="responsibilityCommitment" name="responsibilityCommitment">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['responsibilityCommitment'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['responsibilityCommitment'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="careFamiliarity" class="form-label">Are you familiar with taking care (handling/grooming/medical) of the pet you choose to adopt?</label>
+                                <select class="form-select" id="careFamiliarity" name="careFamiliarity">
+                                    <option value="">Select...</option>
+                                    <option value="yes" <?php echo ($_SESSION['adoption_data']['careFamiliarity'] ?? '') == 'yes' ? 'selected' : ''; ?>>Yes</option>
+                                    <option value="no" <?php echo ($_SESSION['adoption_data']['careFamiliarity'] ?? '') == 'no' ? 'selected' : ''; ?>>No</option>
                                 </select>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="experience" class="form-label">Pet Ownership Experience *</label>
-                                <textarea class="form-control <?php echo in_array('Pet ownership experience is required.', $errors ?? []) ? 'is-invalid' : ''; ?>" id="experience" name="experience" rows="3" placeholder="Tell us about your previous pet experience..." required><?php echo htmlspecialchars($_SESSION['adoption_data']['experience'] ?? ''); ?></textarea>
-                                <div class="invalid-feedback">Pet ownership experience is required.</div>
-                            </div>
 
-                            <div class="mb-3">
-                                <label for="homeType" class="form-label">Type of Home</label>
-                                <select class="form-select" id="homeType" name="homeType">
-                                    <option value="">Select home type...</option>
-                                    <option value="house">House</option>
-                                    <option value="apartment">Apartment</option>
-                                    <option value="condo">Condo</option>
-                                    <option value="other">Other</option>
-                                </select>
+                            <h4 class="mb-3">Terms and Conditions</h4>
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="termsAgreed" name="termsAgreed" value="1" <?php echo isset($_SESSION['adoption_data']['termsAgreed']) ? 'checked' : ''; ?>>
+                                <label class="form-check-label" for="termsAgreed">I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a> *</label>
+                                <?php if (in_array('You must agree to the terms and conditions.', $errors ?? [])): ?>
+                                    <div class="text-danger">You must agree to the terms and conditions.</div>
+                                <?php endif; ?>
                             </div>
 
                             <div class="text-center">
@@ -277,6 +360,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </section>
+
+
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>All of this information will be encoded and will be protected. Also, there is no guarantee that it can be accepted.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="bootstrap.js"></script>
     <script src="adopt.js" type="module"></script>
     <script>
@@ -287,15 +389,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </script>
     <script>
+        function validateTerms() {
+            const termsCheckbox = document.getElementById('termsAgreed');
+            if (!termsCheckbox.checked) {
+                alert('You must agree to the terms and conditions before submitting the form.');
+                return false;
+            }
+            return true;
+        }
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             const petSelect = document.getElementById('petInterest');
+            let petsData = [];
             fetch('pets_api.php')
                 .then(response => response.json())
                 .then(data => {
                     console.log('Pets data fetched:', data);
+                    petsData = data;
                     if (Array.isArray(data) && data.length > 0) {
                         data.forEach(pet => {
-                            // Removed availability filter for debugging
+
                             const option = document.createElement('option');
                             option.value = pet.id;
                             option.textContent = `${pet.name} (${pet.breed})`;
@@ -310,11 +424,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 })
                 .catch(error => {
                     const option = document.createElement('option');
-                    option.textContent = 'Error loading pets';
-                    option.disabled = true;
-                    petSelect.appendChild(option);
-                    console.error('Error fetching pets:', error);
-                });
+                        option.textContent = 'Error loading pets';
+                        option.disabled = true;
+                        petSelect.appendChild(option);
+                        console.error('Error fetching pets:', error);
+                    });
+
+ 
+            const spayedNeuteredSelect = document.getElementById('spayedNeutered');
+            const spayedNeuteredDetailsDiv = document.getElementById('spayedNeuteredDetailsDiv');
+            spayedNeuteredSelect.addEventListener('change', function() {
+                if (this.value === 'other') {
+                    spayedNeuteredDetailsDiv.style.display = 'block';
+                } else {
+                    spayedNeuteredDetailsDiv.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

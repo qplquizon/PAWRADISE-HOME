@@ -8,12 +8,18 @@ session_start();
 $is_admin = isset($_SESSION['user_id']) && isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'admin';
 
 try {
-    // Always show only available pets for adoption
-    $pets_query = $conn->prepare("SELECT * FROM pets WHERE availability = 1 ORDER BY id DESC");
+
+    $pets_query = $conn->prepare("
+        SELECT p.* FROM pets p
+        WHERE p.availability = 1
+        AND p.id NOT IN (
+            SELECT ar.pet_interest FROM adoption_requests ar WHERE ar.status = 'pending'
+        )
+        ORDER BY p.id DESC
+    ");
     $pets_query->execute();
     $pets = $pets_query->fetchAll(PDO::FETCH_ASSOC);
 
-    // Remove duplicates (edge-case: refresh or caching)
     $pets = array_values(array_unique($pets, SORT_REGULAR));
 
 } catch (PDOException $e) {
@@ -78,7 +84,6 @@ try {
         </div>
     </nav>
 
-<!-- Your existing design below (kept 100% intact) -->
 <div class="container py-5">
     <h1 class="text-center mb-4">Meet Our Lovely Animals</h1>
 
@@ -86,7 +91,7 @@ try {
         <div class="alert alert-danger text-center"><?php echo htmlspecialchars($error_message); ?></div>
     <?php endif; ?>
 
-    <!-- Search Bar -->
+
     <div class="d-flex justify-content-center mb-3">
         <div class="input-group" style="max-width: 400px;">
             <input type="text" class="form-control" id="search-input" placeholder="Search by name..." aria-label="Search animals">
@@ -94,7 +99,7 @@ try {
         </div>
     </div>
 
-    <!-- Filter Buttons -->
+
     <div class="d-flex justify-content-center mb-4">
         <div class="btn-group" role="group" aria-label="Animal Filter">
             <button type="button" class="btn btn-outline-primary filter-btn active" data-filter="all">All</button>
@@ -152,7 +157,7 @@ try {
         const searchInput = document.getElementById('search-input');
         const clearSearchBtn = document.getElementById('clear-search');
 
-        // Function to filter animals
+
         function filterAnimals() {
             const searchTerm = searchInput.value.toLowerCase();
             const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
@@ -172,25 +177,25 @@ try {
             });
         }
 
-        // Filter button event listeners
+
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const filter = this.getAttribute('data-filter');
 
-                // Remove active class from all buttons
+     
                 filterButtons.forEach(btn => btn.classList.remove('active'));
-                // Add active class to clicked button
+
                 this.classList.add('active');
 
-                // Apply filters
+
                 filterAnimals();
             });
         });
 
-        // Search input event listener
+ 
         searchInput.addEventListener('input', filterAnimals);
 
-        // Clear search button event listener
+
         clearSearchBtn.addEventListener('click', function() {
             searchInput.value = '';
             filterAnimals();

@@ -307,6 +307,32 @@ body {
     text-decoration: none;
 }
 
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 1.2rem 2rem;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.8rem;
+    }
+
+    .hero-description {
+        font-size: 1.15rem;
+    }
+
+    .section-title {
+        font-size: 2.3rem;
+    }
+
+    .animal-image {
+        height: 220px;
+    }
+}
+
 @media (max-width: 768px) {
     .navbar {
         padding: 1rem;
@@ -393,5 +419,83 @@ body {
     .footer-section .col-lg-3,
     .footer-section .col-lg-6 {
         margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar {
+        padding: 0.8rem;
+    }
+
+    .logo-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .brand-line1 {
+        font-size: 1.3rem;
+    }
+
+    .brand-line2 {
+        font-size: 1rem;
+    }
+
+    .nav-link {
+        font-size: 0.8rem;
+        padding: 0.3rem 0;
+    }
+
+    .hero-section {
+        height: auto;
+        min-height: 100vh;
+        padding: 3rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .hero-description {
+        font-size: 0.9rem;
+    }
+
+    .hero-buttons .btn {
+        width: 180px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .animal-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .animal-image {
+        height: 180px;
+    }
+
+    .cta-buttons .btn {
+        width: 220px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9rem;
+    }
+
+    .footer-section {
+        padding: 2rem 0;
+    }
+
+    .footer-section h5 {
+        font-size: 1.1rem;
+    }
+
+    .footer-section h6 {
+        font-size: 1rem;
     }
 }

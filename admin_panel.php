@@ -11,7 +11,7 @@ $query->execute();
 $result = $query->fetch(PDO::FETCH_ASSOC);
 $total_users = $result['total_users'];
 
-// Fetch registered users
+
 try {
     $users_query = $conn->prepare("SELECT name, email FROM `account` ORDER BY name ASC");
     $users_query->execute();
@@ -34,7 +34,6 @@ if(isset($_POST['add_pet'])){
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        // Make image name unique to prevent overwrites
         $unique_name = time() . '_' . basename($image_name);
         $image_path = 'uploads/' . $unique_name;
         if(move_uploaded_file($image_tmp, $image_path)){
@@ -47,7 +46,7 @@ try {
     $insert->execute([$name, $breed, $description, $image, $availability, $type, $featured]);
     $_SESSION['message'] = "Pet added successfully!";
 } catch (PDOException $e) {
-    // If column 'type' or 'featured' doesn't exist, insert without it
+
     if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false || strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
         try {
             $insert = $conn->prepare("INSERT INTO `pets` (name, breed, description, image, availability) VALUES (?, ?, ?, ?, ?)");
@@ -78,7 +77,7 @@ if(isset($_POST['update_pet'])){
     if(isset($_FILES['image']) && $_FILES['image']['error'] == 0){
         $image_name = $_FILES['image']['name'];
         $image_tmp = $_FILES['image']['tmp_name'];
-        // Make image name unique to prevent overwrites
+
         $unique_name = time() . '_' . basename($image_name);
         $image_path = 'uploads/' . $unique_name;
         if(move_uploaded_file($image_tmp, $image_path)){
@@ -88,11 +87,11 @@ if(isset($_POST['update_pet'])){
 
     try {
         if($image != ''){
-            // Update with new image
+
             $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
             $update->execute([$name, $breed, $description, $image, $availability, $type, $featured, $pet_id]);
         } else {
-            // Update without changing image
+
             $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, availability = ?, type = ?, featured = ? WHERE id = ?");
             $update->execute([$name, $breed, $description, $availability, $type, $featured, $pet_id]);
         }
@@ -100,9 +99,9 @@ if(isset($_POST['update_pet'])){
         header("Location: admin_panel.php");
         exit();
     } catch (PDOException $e) {
-        // Handle missing columns individually
+
         if (strpos($e->getMessage(), 'Unknown column \'type\'') !== false) {
-            // Update without type, but with featured
+
             if($image != ''){
                 $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, featured = ? WHERE id = ?");
                 $update->execute([$name, $breed, $description, $image, $availability, $featured, $pet_id]);
@@ -112,7 +111,7 @@ if(isset($_POST['update_pet'])){
             }
             $_SESSION['message'] = "Pet updated successfully! (Note: Type field may not have been updated due to database schema)";
         } elseif (strpos($e->getMessage(), 'Unknown column \'featured\'') !== false) {
-            // Update without featured
+
             if($image != ''){
                 $update = $conn->prepare("UPDATE `pets` SET name = ?, breed = ?, description = ?, image = ?, availability = ?, type = ? WHERE id = ?");
                 $update->execute([$name, $breed, $description, $image, $availability, $type, $pet_id]);
@@ -134,31 +133,35 @@ if(isset($_POST['delete_pet'])){
     $delete->execute([$pet_id]);
 }
 
-// Handle adoption request actions
+
 if(isset($_POST['accept_adoption'])){
     $request_id = $_POST['accept_adoption'];
-    // First, get the pet_interest from the request
+
     $get_pet = $conn->prepare("SELECT pet_interest FROM adoption_requests WHERE id = ?");
     $get_pet->execute([$request_id]);
     $pet_data = $get_pet->fetch(PDO::FETCH_ASSOC);
     if($pet_data){
         $pet_id = $pet_data['pet_interest'];
-        // Set pet availability to 0 (archived/not available)
+
         $archive_pet = $conn->prepare("UPDATE `pets` SET availability = 0 WHERE id = ?");
         $archive_pet->execute([$pet_id]);
     }
-    // Update request status to accepted
+
     $update = $conn->prepare("UPDATE adoption_requests SET status = 'accepted' WHERE id = ?");
     $update->execute([$request_id]);
 }
 
 if(isset($_POST['reject_adoption'])){
     $request_id = $_POST['reject_adoption'];
+    
     $update = $conn->prepare("UPDATE adoption_requests SET status = 'rejected' WHERE id = ?");
     $update->execute([$request_id]);
+    $_SESSION['message'] = "Adoption request rejected.";
+    header("Location: admin_panel.php");
+    exit();
 }
 
-// Handle donation submission
+
 if(isset($_POST['name']) && isset($_POST['contactNumber']) && isset($_POST['amount']) && isset($_POST['paymentMethod']) && isset($_POST['referenceNumber'])){
     $name = $_POST['name'];
     $contact_number = $_POST['contactNumber'];
@@ -180,7 +183,7 @@ try {
     $pets = [];
 }
 
-// Fetch adoption requests with pet names
+
 try {
     $adoption_query = $conn->prepare("SELECT ar.*, p.name as pet_name, p.breed as pet_breed FROM `adoption_requests` ar LEFT JOIN `pets` p ON ar.pet_interest = p.id ORDER BY ar.submitted_at DESC");
     $adoption_query->execute();
@@ -190,7 +193,7 @@ try {
     $adoption_requests = [];
 }
 
-// Fetch donations
+
 try {
     $donations_query = $conn->prepare("SELECT * FROM `donations` ORDER BY submitted_at DESC");
     $donations_query->execute();
@@ -200,7 +203,7 @@ try {
     $donations = [];
 }
 
-// Calculate total donations
+
 $total_donations = 0;
 foreach ($donations as $donation) {
     $total_donations += $donation['amount'];
@@ -226,10 +229,62 @@ $total_adoption_requests = count($adoption_requests);
         .nav-tabs {
             flex-wrap: wrap;
         }
-        @media (max-width: 576px) {
+        @media (max-width: 1024px) {
+            .nav-tabs .nav-link {
+                margin-right: 12px;
+                font-size: 0.95rem;
+            }
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .card {
+                margin-bottom: 1.5rem;
+            }
+        }
+        @media (max-width: 768px) {
             .nav-tabs .nav-link {
                 margin-right: 10px;
                 font-size: 0.9rem;
+            }
+            .container h1 {
+                font-size: 1.8rem;
+            }
+            .table-responsive {
+                font-size: 0.9rem;
+            }
+            .card-body h5 {
+                font-size: 1.1rem;
+            }
+            .card-body p {
+                font-size: 0.9rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .nav-tabs .nav-link {
+                margin-right: 5px;
+                font-size: 0.8rem;
+                padding: 0.5rem 0.75rem;
+            }
+            .container h1 {
+                font-size: 1.6rem;
+            }
+            .table-responsive {
+                font-size: 0.85rem;
+            }
+            .card-body h5 {
+                font-size: 1rem;
+            }
+            .card-body p {
+                font-size: 0.85rem;
+            }
+            .btn {
+                font-size: 0.85rem;
+                padding: 0.4rem 0.8rem;
+            }
+            .form-control {
+                font-size: 0.85rem;
+                padding: 0.5rem;
             }
         }
     </style>
@@ -483,9 +538,26 @@ $total_adoption_requests = count($adoption_requests);
                                 <p class="card-text"><strong>Email:</strong> <?php echo htmlspecialchars($request['email']); ?></p>
                                 <p class="card-text"><strong>Phone:</strong> <?php echo htmlspecialchars($request['phone']); ?></p>
                                 <p class="card-text"><strong>Address:</strong> <?php echo htmlspecialchars($request['address']); ?></p>
+                                <p class="card-text"><strong>Occupation:</strong> <?php echo htmlspecialchars($request['occupation'] ?? 'N/A'); ?></p>
                                 <p class="card-text"><strong>Pet Interest:</strong> <?php echo htmlspecialchars($request['pet_name'] . ' (' . $request['pet_breed'] . ')'); ?></p>
-                                <p class="card-text"><strong>Experience:</strong> <?php echo htmlspecialchars($request['experience']); ?></p>
-                                <p class="card-text"><strong>Home Type:</strong> <?php echo htmlspecialchars($request['home_type']); ?></p>
+
+                                <h6 class="mt-3">Living Situation</h6>
+                                <p class="card-text"><strong>Home Type:</strong> <?php echo htmlspecialchars($request['home_type'] ?? 'N/A'); ?></p>
+                                <p class="card-text"><strong>Pets Allowed:</strong> <?php echo htmlspecialchars(($request['pets_allowed'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Family Support:</strong> <?php echo htmlspecialchars(($request['family_support'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Home Visit Permission:</strong> <?php echo htmlspecialchars(($request['home_visit_permission'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Other Pets Type:</strong> <?php echo htmlspecialchars(ucfirst($request['other_pets_type'] ?? 'N/A')); ?></p>
+                                <p class="card-text"><strong>Other Pets Count:</strong> <?php echo htmlspecialchars($request['other_pets_count'] ?? 'N/A'); ?></p>
+                                <p class="card-text"><strong>Spayed/Neutered:</strong> <?php echo htmlspecialchars(ucfirst($request['spayed_neutered'] ?? 'N/A')); ?></p>
+                                <?php if (!empty($request['spayed_neutered_details'])): ?>
+                                    <p class="card-text"><strong>Spayed/Neutered Details:</strong> <?php echo htmlspecialchars($request['spayed_neutered_details']); ?></p>
+                                <?php endif; ?>
+                                <p class="card-text"><strong>Move with Pets:</strong> <?php echo htmlspecialchars(($request['move_with_pets'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Monetary Support:</strong> <?php echo htmlspecialchars(($request['monetary_support'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Secure Home:</strong> <?php echo htmlspecialchars(($request['secure_home'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Responsibility Commitment:</strong> <?php echo htmlspecialchars(($request['responsibility_commitment'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+                                <p class="card-text"><strong>Care Familiarity:</strong> <?php echo htmlspecialchars(($request['experience'] ?? '') == 'yes' ? 'Yes' : 'No'); ?></p>
+
                                 <p class="card-text"><strong>Submitted:</strong> <?php echo htmlspecialchars($request['submitted_at']); ?></p>
                                 <p class="card-text">
                                     <span class="badge <?php echo $request['status'] == 'accepted' ? 'bg-success' : ($request['status'] == 'rejected' ? 'bg-danger' : 'bg-warning'); ?>">
@@ -582,10 +654,10 @@ $total_adoption_requests = count($adoption_requests);
     <script src="adopt.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Reset the form to ensure no residual data from previous submissions
+
             document.getElementById('petForm').reset();
             document.getElementById('pet_id').value = '';
-            // Additionally clear any autofilled values
+
             const inputs = document.querySelectorAll('#petForm input, #petForm textarea, #petForm select');
             inputs.forEach(input => {
                 input.value = '';
@@ -619,7 +691,7 @@ $total_adoption_requests = count($adoption_requests);
             modalPetId.value = petId;
         });
 
-        // Edit pet button click handler
+
         document.querySelectorAll('.edit-pet-btn').forEach(button => {
             button.addEventListener('click', () => {
                 const pet = JSON.parse(button.getAttribute('data-pet'));
@@ -630,16 +702,16 @@ $total_adoption_requests = count($adoption_requests);
                 document.getElementById('availability').checked = pet.availability == 1;
                 document.getElementById('featured').checked = pet.featured == 1;
                 document.getElementById('type').value = pet.type;
-                // Image input left blank for no change
 
-                // Toggle buttons
+
+
                 document.getElementById('submitBtn').classList.add('d-none');
                 document.getElementById('updateBtn').classList.remove('d-none');
                 document.getElementById('cancelBtn').classList.remove('d-none');
             });
         });
 
-        // Cancel button handler
+
         document.getElementById('cancelBtn').addEventListener('click', () => {
             document.getElementById('petForm').reset();
             document.getElementById('pet_id').value = '';
@@ -648,7 +720,7 @@ $total_adoption_requests = count($adoption_requests);
             document.getElementById('cancelBtn').classList.add('d-none');
         });
 
-        // User search functionality
+
         document.getElementById('userSearch').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             const table = document.getElementById('usersTable');
@@ -665,7 +737,7 @@ $total_adoption_requests = count($adoption_requests);
             });
         });
 
-        // Donor search functionality
+
         document.getElementById('donationSearch').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             const table = document.getElementById('donorsTable');
@@ -683,7 +755,7 @@ $total_adoption_requests = count($adoption_requests);
             });
         });
 
-        // Adoption requests search functionality
+
         document.getElementById('adoptionSearch').addEventListener('input', function() {
             const searchTerm = this.value.toLowerCase();
             const container = document.getElementById('adoptionRequestsRow');

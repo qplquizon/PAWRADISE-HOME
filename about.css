@@ -68,6 +68,24 @@
     line-height: 1.6;
 }
 
+@media (max-width: 1024px) {
+    .about-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .about-hero .lead {
+        font-size: 1.3rem;
+    }
+
+    .our-story {
+        padding: 3.5rem 0;
+    }
+
+    .mission-item {
+        padding: 1.8rem 1rem;
+    }
+}
+
 @media (max-width: 768px) {
     .about-hero {
         min-height: 40vh;
@@ -96,5 +114,44 @@
 
     .mission-icon {
         font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-hero {
+        min-height: 35vh;
+        padding: 2.5rem 1rem;
+    }
+
+    .about-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .about-hero .lead {
+        font-size: 1rem;
+    }
+
+    .our-story {
+        padding: 2.5rem 0;
+    }
+
+    .our-story h2 {
+        font-size: 1.8rem;
+    }
+
+    .our-story .lead {
+        font-size: 1.1rem;
+    }
+
+    .mission-item {
+        padding: 1.2rem 0.3rem;
+    }
+
+    .mission-icon {
+        font-size: 2rem;
+    }
+
+    .mission-item h4 {
+        font-size: 1.1rem;
     }
 }

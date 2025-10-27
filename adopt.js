@@ -14,20 +14,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             // Clear previous warnings
             clearWarnings();
-            
+
             // Get form fields
+            const petInterest = document.getElementById('petInterest');
             const firstName = document.getElementById('firstName');
             const lastName = document.getElementById('lastName');
             const email = document.getElementById('email');
-            const phone = document.getElementById('phone');
+            const cellphone = document.getElementById('cellphone');
             const address = document.getElementById('address');
-            
+
             let isValid = true;
-            const requiredFields = [firstName, lastName, email, phone, address];
-            
+            const requiredFields = [petInterest, firstName, lastName, email, address];
+
             // Check required fields
             requiredFields.forEach(field => {
                 if (!field.value.trim()) {
@@ -35,19 +36,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     isValid = false;
                 }
             });
-            
+
             // Email validation
             if (email.value.trim() && !isValidEmail(email.value)) {
                 showWarning(email, 'Please enter a valid email address.');
                 isValid = false;
             }
-            
+
             // Phone validation (basic)
-            if (phone.value.trim() && !isValidPhone(phone.value)) {
-                showWarning(phone, 'Please enter a valid phone number.');
+            if (cellphone.value.trim() && !isValidPhone(cellphone.value)) {
+                showWarning(cellphone, 'Please enter a valid phone number.');
                 isValid = false;
             }
-            
+
             if (isValid) {
                 // Submit the form
                 form.submit();
@@ -80,8 +81,8 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-function isValidPhone(phone) {
+function isValidPhone(cellphone) {
     // Basic phone validation: allow digits, spaces, dashes, parentheses, + sign
     const phoneRegex = /^[\+]?[\d\s\-\(\)]+$/;
-    return phoneRegex.test(phone) && phone.replace(/[^\d]/g, '').length >= 10;
+    return phoneRegex.test(cellphone) && cellphone.replace(/[^\d]/g, '').length >= 10;
 }

@@ -144,6 +144,28 @@
 }
 
 
+@media (max-width: 1024px) {
+    .animals-hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .animals-hero .lead {
+        font-size: 1.3rem;
+    }
+
+    .animals-grid {
+        padding: 3.5rem 0;
+    }
+
+    .animal-image {
+        height: 220px;
+    }
+
+    .adoption-cta {
+        padding: 3.5rem 0;
+    }
+}
+
 @media (max-width: 768px) {
     .animals-hero {
         min-height: 40vh;
@@ -172,6 +194,72 @@
 
     .btn-category {
         padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .animals-hero {
+        min-height: 35vh;
+        padding: 2.5rem 1rem;
+    }
+
+    .animals-hero h1 {
+        font-size: 1.8rem;
+    }
+
+    .animals-hero .lead {
+        font-size: 1rem;
+    }
+
+    .category-filters {
+        padding: 2rem 0;
+    }
+
+    .btn-category {
+        padding: 0.35rem 0.6rem;
+        font-size: 0.8rem;
+        border-radius: 20px;
+    }
+
+    .animals-grid {
+        padding: 2.5rem 0;
+    }
+
+    .animal-card {
+        margin-bottom: 1.5rem;
+    }
+
+    .animal-image {
+        height: 160px;
+    }
+
+    .animal-name {
+        font-size: 1.1rem;
+    }
+
+    .animal-breed {
+        font-size: 0.9rem;
+    }
+
+    .animal-description {
+        font-size: 0.9rem;
+    }
+
+    .adoption-cta {
+        padding: 2.5rem 0;
+    }
+
+    .adoption-cta h2 {
+        font-size: 1.8rem;
+    }
+
+    .adoption-cta .lead {
+        font-size: 1rem;
+    }
+
+    .adoption-cta .btn {
+        padding: 0.6rem 1.5rem;
         font-size: 0.9rem;
     }
 }
